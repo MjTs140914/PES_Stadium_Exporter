@@ -40,6 +40,7 @@ from bpy.props import (EnumProperty, CollectionProperty, IntProperty, StringProp
 from Tools import FmdlFile, Ftex, IO, PesFoxShader, PesFoxXML, PesEnlighten, PesScarecrow, PesStaff
 from xml.dom import minidom
 from mathutils import Vector
+from re import search
 
 bl_info = {
 	"name": "PES Stadium Exporter",
@@ -697,7 +698,10 @@ def findDirectory(dirPath):
 						path = f"{listDir[0]}\\{os.path.join(*listDir).split(':')[1]}"
 						return path[:-4]
 					
-
+def findTextureDirectory(dirPath):
+	for root in os.walk(dirPath):
+		if "#windx11" in root[0]:
+			return root[0]
 
 def getDirPath(dirPath):
 	for root, directories, filenames in os.walk(dirPath):
@@ -713,14 +717,16 @@ def textureLoad(dirPath):
 				
 				ddsPath = os.path.join(root, filename + '.dds')
 				ftexPath = os.path.join(root, filename + extension)
-				if not os.path.isfile(ddsPath) and not "lut" in ddsPath and not "LUT" in ddsPath:
+				if not os.path.isfile(ddsPath):
+					# if search("lut", ddsPath.lower()):
+					# 	continue
 					try:
 						Ftex.ftexToDds(ftexPath, ddsPath)
 					except:
 						convert_ftex(ftexPath)
 					texconv(ddsPath, dirPath, " -y -l -f DXT5 -ft dds -srgb", True)
 					print('Converting {0} ==> {1}'.format(filename+'.ftex', filename+'.dds'))
-				
+					
 	return 1
 
 def remove_dds(dirPath):
@@ -2698,9 +2704,10 @@ class FDMDL_OT_Import_Main_Stadium(bpy.types.Operator, bpy_extras.io_utils.Impor
 
 		getTextureDir = str()
 		if context.scene.fmdl_import_load_textures:
-			textureDir = f"{findDirectory(fpkdir)}sourceimages"
-			if os.path.exists(textureDir):
-				getTextureDir = getDirPath(textureDir)
+			textureDir = f"{findDirectory(fpkdir)}"
+			win11Dir = findTextureDirectory(textureDir)
+			if os.path.exists(win11Dir):
+				getTextureDir = getDirPath(win11Dir)
 			if os.path.exists(getTextureDir):
 				textureLoad(getTextureDir)
 		try:
@@ -2765,9 +2772,10 @@ class FDMDL_OT_Import_Extra_Stadium(bpy.types.Operator, bpy_extras.io_utils.Impo
 
 		getTextureDir = str()
 		if context.scene.fmdl_import_load_textures:
-			textureDir = f"{findDirectory(fpkdir)}sourceimages"
-			if os.path.exists(textureDir):
-				getTextureDir = getDirPath(textureDir)
+			textureDir = f"{findDirectory(fpkdir)}"
+			win11Dir = findTextureDirectory(textureDir)
+			if os.path.exists(win11Dir):
+				getTextureDir = getDirPath(win11Dir)
 			if os.path.exists(getTextureDir):
 				textureLoad(getTextureDir)
 		try:
@@ -4631,14 +4639,10 @@ class FMDL_Externally_Edit(bpy.types.Operator):
 		mat_name = bpy.context.active_object.active_material.name
 		node_name = bpy.context.active_node.name
 		imagePath = bpy.data.materials[mat_name].node_tree.nodes[node_name].image.filepath
-		if os.path.isfile(imagePath):
-			try:
-				bpy.ops.image.external_edit(filepath=imagePath)
-			except Exception as msg:
-				self.report({"WARNING"}, format(msg))
-				return {'CANCELLED'}
-		else:
-			self.report({"WARNING"}, "File not found!!")
+		try:
+			bpy.ops.image.external_edit(filepath=imagePath)
+		except Exception as msg:
+			self.report({"WARNING"}, format(msg))
 			return {'CANCELLED'}
 		return {'FINISHED'}
 	pass
