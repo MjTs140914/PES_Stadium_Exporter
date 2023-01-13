@@ -1,0 +1,19 @@
+
+	<setting type="LightBillboard" index="iSize">
+		<param id="texturePath" type="path" index="0" value="/Assets/pes16/model/bg/common/effect/texture/%LT" />
+		<param id="texturePath" type="path" index="1" value="/Assets/pes16/model/bg/common/effect/texture/circle.ftex" />
+		<param id="locatorPath" type="path" value="/Assets/pes16/model/bg/stid/effect/locator/locstar.model" />
+		<param id="scaleAtt" type="vector3" value="1.000000, 0.000000, 0.000000" />
+		<param id="scalePhi" type="angle" value="120.000000" />
+		<param id="scaleTheta" type="angle" value="20.000000" />
+		<param id="scaleFalloff" type="float" value="24.000000" />
+		<param id="scaleMin" type="float" value="7.000000" />
+		<param id="scaleMax" type="float" value="18.000000" />
+		<param id="alphaAtt" type="vector3" value="1.000000, 0.000000, 0.000000" />
+		<param id="alphaPhi" type="angle" value="0.000000" />
+		<param id="alphaTheta" type="angle" value="10.000000" />
+		<param id="alphaFalloff" type="float" value="1.000000" />
+		<param id="alphaMin" type="float" value="1.000000" />
+		<param id="alphaMax" type="float" value="1.000000" />
+		<param id="rot" type="angle" value="%LR.000000" />
+	</setting>

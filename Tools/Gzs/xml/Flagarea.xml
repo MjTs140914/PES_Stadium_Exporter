@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fox formatVersion="2" fileVersion="0" originalVersion="Sun Jan 03 15:27:04 UTC+07:00 2021">
+  <classes>
+    <class name="Entity" super="" version="2" />
+    <class name="Data" super="Entity" version="2" />
+    <class name="DataSet" super="" version="0" />
+    <class name="AudienceAreaData" super="" version="1" />
+  </classes>
+  <entities>
+    <entity class="DataSet" classVersion="0" addr="0xAACF04D0" unknown1="296" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value hash="0xB8A0BF169F98" />
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="dataList" type="EntityPtr" container="StringMap" arraySize="1">
+          <value key="AudienceAreaData_stid">0xAAC402F0</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="AudienceAreaData" classVersion="1" addr="0xAAC402F0" unknown1="144" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value>AudienceAreaData_stid</value>
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0xAACF04D0</value>
+        </property>
+        <property name="areaFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/stid/standsFlag/flagarea.bin</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties>
+        <property name="standsObjectNumHA1" type="uint32" container="StaticArray" arraySize="2">
+          <value>150</value>
+          <value>25</value>
+        </property>
+        <property name="standsObjectNumHA2" type="uint32" container="StaticArray" arraySize="2">
+          <value>120</value>
+          <value>80</value>
+        </property>
+        <property name="standsObjectVariationNumHA1" type="uint32" container="StaticArray" arraySize="2">
+          <value>75</value>
+          <value>10</value>
+        </property>
+        <property name="standsObjectVariationNumHA2" type="uint32" container="StaticArray" arraySize="2">
+          <value>60</value>
+          <value>40</value>
+        </property>
+        <property name="standsObjectHeightMin" type="float" container="StaticArray" arraySize="1">
+          <value>0.55</value>
+        </property>
+        <property name="standsObjectHeightMax" type="float" container="StaticArray" arraySize="1">
+          <value>1.55</value>
+        </property>
+        <property name="standsObjectModelNum" type="uint32" container="StaticArray" arraySize="1">
+          <value>4</value>
+        </property>
+        <property name="standsObjectModelOccurrenceRate" type="float" container="StaticArray" arraySize="4">
+          <value>1</value>
+          <value>4</value>
+          <value>3</value>
+          <value>3</value>
+        </property>
+        <property name="standsObjectModelScaleMin" type="float" container="StaticArray" arraySize="4">
+          <value>1.15</value>
+          <value>1.25</value>
+          <value>1.1</value>
+          <value>1.1</value>
+        </property>
+        <property name="standsObjectModelScaleMax" type="float" container="StaticArray" arraySize="4">
+          <value>0.9</value>
+          <value>0.9</value>
+          <value>0.9</value>
+          <value>0.9</value>
+        </property>
+        <property name="standsObjectModelAngleMin" type="float" container="StaticArray" arraySize="4">
+          <value>-90</value>
+          <value>-90</value>
+          <value>-90</value>
+          <value>-90</value>
+        </property>
+        <property name="standsObjectModelAngleMax" type="float" container="StaticArray" arraySize="4">
+          <value>90</value>
+          <value>90</value>
+          <value>90</value>
+          <value>90</value>
+        </property>
+      </dynamicProperties>
+    </entity>
+  </entities>
+</fox>

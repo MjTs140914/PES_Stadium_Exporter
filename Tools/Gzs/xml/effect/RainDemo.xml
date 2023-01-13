@@ -1,0 +1,47 @@
+		
+		<setting type="MultiUvScrollScreen" index="0">
+			<param id="texturePath" type="path" index="0" value="/Assets/pes16/model/bg/common/effect/texture/tex_rain_screen_00.ftex" />
+			<param id="texturePath" type="path" index="1" value="/Assets/pes16/model/bg/common/effect/texture/tex_rain_screen_00.ftex" />
+			<param id="speed_u" type="float" index="0" value="-0.02" />
+			<param id="speed_v" type="float" index="0" value="-2.00" />
+			<param id="speed_u" type="float" index="1" value="-0.12" />
+			<param id="speed_v" type="float" index="1" value="-3.5" />
+			<param id="wrap_rate_u" type="float" index="0" value="4.0" />
+			<param id="wrap_rate_v" type="float" index="0" value="3.0" />
+			<param id="wrap_rate_u" type="float" index="1" value="2.5" />
+			<param id="wrap_rate_v" type="float" index="1" value="2.0" />
+			<param id="colors" type="rgba" index="0" value="0xffffff10" />
+			<param id="colors" type="rgba" index="1" value="0xffffff10" />
+			<param id="colors" type="rgba" index="2" value="0xffffff10" />
+			<param id="colors" type="rgba" index="3" value="0xffffff10" />
+			<param id="colors" type="rgba" index="4" value="0xffffff15" />
+			<param id="colors" type="rgba" index="5" value="0xffffff15" />
+			<param id="colors" type="rgba" index="6" value="0xffffff15" />
+			<param id="colors" type="rgba" index="7" value="0xffffff15" />
+			<param id="dist" type="float" value="5.0" />
+		</setting>
+		<setting type="RainDemo" index="0">
+			<param id="texturePath" type="path" value="/Assets/pes16/model/bg/common/effect/texture/tex_rain_particle_00.ftex" />
+			<param id="num_unit" type="uint" value="200" />
+			<param id="fov" type="float" value="45" />
+			<param id="width" type="float" value="1.8" />
+			<param id="height" type="float" value="0.5" />
+			<param id="fade_limit" type="float" value="1.0" />
+			<param id="fade_speed" type="uint" value="20" />
+			<param id="near_zone_speed" type="float" value="84.0" />
+			<param id="near_zone_dist" type="float" value="0.7" />
+			<param id="near_zone_area_x" type="float" value="30.0" />
+			<param id="near_zone_area_z" type="float" value="5.0" />
+			<param id="near_zone_colors" type="rgba" index="0" value="0xffffff18" />
+			<param id="near_zone_colors" type="rgba" index="1" value="0xffffff18" />
+			<param id="near_zone_colors" type="rgba" index="2" value="0xffffff18" />
+			<param id="near_zone_colors" type="rgba" index="3" value="0xffffff18" />
+			<param id="far_zone_speed" type="float" value="42.0" />
+			<param id="far_zone_dist" type="float" value="1.1" />
+			<param id="far_zone_area_x" type="float" value="30.0" />
+			<param id="far_zone_area_z" type="float" value="5.0" />
+			<param id="far_zone_colors" type="rgba" index="0" value="0xffffff22" />
+			<param id="far_zone_colors" type="rgba" index="1" value="0xffffff22" />
+			<param id="far_zone_colors" type="rgba" index="2" value="0xffffff22" />
+			<param id="far_zone_colors" type="rgba" index="3" value="0xffffff22" />
+		</setting>

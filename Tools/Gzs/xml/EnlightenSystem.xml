@@ -1,0 +1,295 @@
+        
+        <entity class="EnlightenProbeSet" classVersion="0" addr="0x00007200" unknown1="352" unknown2="0">
+        <staticProperties>
+            <property name="name" type="String" container="StaticArray" arraySize="1">
+            <value>EnlightenProbeSet0000</value>
+            </property>
+            <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+            <value>0x03172C40</value>
+            </property>
+            <property name="parent" type="EntityHandle" container="StaticArray" arraySize="1">
+            <value>0x00000000</value>
+            </property>
+            <property name="transform" type="EntityPtr" container="StaticArray" arraySize="1">
+            <value>0x00007300</value>
+            </property>
+            <property name="shearTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+            <value>0x00000000</value>
+            </property>
+            <property name="pivotTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+            <value>0x00000000</value>
+            </property>
+            <property name="children" type="EntityHandle" container="List" />
+            <property name="flags" type="uint32" container="StaticArray" arraySize="1">
+            <value>7</value>
+            </property>
+            <property name="voxelSize" type="float" container="StaticArray" arraySize="1">
+            <value>2</value>
+            </property>
+            <property name="minProbeSetSize" type="uint32" container="StaticArray" arraySize="1">
+            <value>1000</value>
+            </property>
+            <property name="mergingThreshold" type="float" container="StaticArray" arraySize="1">
+            <value>0.4</value>
+            </property>
+            <property name="minProbeSpacing" type="float" container="StaticArray" arraySize="1">
+            <value>4</value>
+            </property>
+            <property name="maxProbeSpacing" type="float" container="StaticArray" arraySize="1">
+            <value>32</value>
+            </property>
+            <property name="probeSets" type="FilePtr" container="DynamicArray" arraySize="108">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_0.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_1.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_2.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_3.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_4.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_5.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_6.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_7.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_8.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_9.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_10.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_11.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_12.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_13.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_14.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_15.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_16.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_17.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_18.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_19.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_20.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_21.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_22.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_23.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_24.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_25.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_26.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_27.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_28.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_29.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_30.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_31.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_32.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_33.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_34.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_35.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_36.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_37.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_38.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_39.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_40.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_41.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_42.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_43.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_44.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_45.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_46.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_47.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_48.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_49.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_50.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_51.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_52.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_53.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_54.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_55.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_56.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_57.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_58.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_59.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_60.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_61.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_62.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_63.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_64.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_65.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_66.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_67.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_68.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_69.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_70.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_71.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_72.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_73.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_74.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_75.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_76.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_77.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_78.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_79.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_80.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_81.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_82.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_83.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_84.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_85.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_86.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_87.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_88.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_89.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_90.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_91.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_92.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_93.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_94.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_95.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_96.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_97.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_98.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_99.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_100.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_101.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_102.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_103.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_104.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_105.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_106.ps.sse</value>
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/EnlightenProbeSet0000_PS_107.ps.sse</value>
+            </property>
+        </staticProperties>
+        <dynamicProperties />
+        </entity>
+        <entity class="TransformEntity" classVersion="0" addr="0x00007300" unknown1="96" unknown2="0">
+        <staticProperties>
+            <property name="owner" type="EntityHandle" container="StaticArray" arraySize="1">
+            <value>0x00007200</value>
+            </property>
+            <property name="transform_scale" type="Vector3" container="StaticArray" arraySize="1">
+            <value x="330.477661" y="80.63249" z="264.6176" w="0" />
+            </property>
+            <property name="transform_rotation_quat" type="Quat" container="StaticArray" arraySize="1">
+            <value x="0" y="0" z="0" w="1" />
+            </property>
+            <property name="transform_translation" type="Vector3" container="StaticArray" arraySize="1">
+            <value x="0" y="23.8695831" z="0" w="0" />
+            </property>
+        </staticProperties>
+        <dynamicProperties />
+        </entity>
+        <entity class="EnlightenSystemContainer" classVersion="0" addr="0x00007500" unknown1="856" unknown2="0">
+        <staticProperties>
+            <property name="name" type="String" container="StaticArray" arraySize="1">
+            <value>EnlightenSystemContainer0000</value>
+            </property>
+            <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+            <value>0x03172C40</value>
+            </property>
+            <property name="priority" type="uint32" container="StaticArray" arraySize="1">
+            <value>0</value>
+            </property>
+            <property name="lowOutputPixelSize" type="float" container="StaticArray" arraySize="1">
+            <value>20</value>
+            </property>
+            <property name="lowClusterSize" type="float" container="StaticArray" arraySize="1">
+            <value>40</value>
+            </property>
+            <property name="lowSamplesPerCluster" type="uint32" container="StaticArray" arraySize="1">
+            <value>16</value>
+            </property>
+            <property name="lowRadiosityBudget" type="uint32" container="StaticArray" arraySize="1">
+            <value>32</value>
+            </property>
+            <property name="lowProbeRadiosityBudget" type="uint32" container="StaticArray" arraySize="1">
+            <value>32</value>
+            </property>
+            <property name="mediumOutputPixelSize" type="float" container="StaticArray" arraySize="1">
+            <value>20</value>
+            </property>
+            <property name="mediumClusterSize" type="float" container="StaticArray" arraySize="1">
+            <value>40</value>
+            </property>
+            <property name="mediumSamplesPerCluster" type="uint32" container="StaticArray" arraySize="1">
+            <value>16</value>
+            </property>
+            <property name="mediumRadiosityBudget" type="uint32" container="StaticArray" arraySize="1">
+            <value>48</value>
+            </property>
+            <property name="mediumProbeRadiosityBudget" type="uint32" container="StaticArray" arraySize="1">
+            <value>48</value>
+            </property>
+            <property name="highOutputPixelSize" type="float" container="StaticArray" arraySize="1">
+            <value>4</value>
+            </property>
+            <property name="highClusterSize" type="float" container="StaticArray" arraySize="1">
+            <value>8</value>
+            </property>
+            <property name="highSamplesPerCluster" type="uint32" container="StaticArray" arraySize="1">
+            <value>32</value>
+            </property>
+            <property name="highRadiosityBudget" type="uint32" container="StaticArray" arraySize="1">
+            <value>64</value>
+            </property>
+            <property name="highProbeRadiosityBudget" type="uint32" container="StaticArray" arraySize="1">
+            <value>64</value>
+            </property>
+            <property name="secondaryBounceScale" type="float" container="StaticArray" arraySize="1">
+            <value>0.9</value>
+            </property>
+            <property name="lowRcFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.rc.sse</value>
+            </property>
+            <property name="lowIwFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.iw.sse</value>
+            </property>
+            <property name="lowCawFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.caw</value>
+            </property>
+            <property name="lowRntFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.rnt</value>
+            </property>
+            <property name="lowVisFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.vis</value>
+            </property>
+            <property name="lowPuvFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.puv</value>
+            </property>
+            <property name="lowPatFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Low.pat</value>
+            </property>
+            <property name="mediumRcFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.rc.sse</value>
+            </property>
+            <property name="mediumIwFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.iw.sse</value>
+            </property>
+            <property name="mediumCawFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.caw</value>
+            </property>
+            <property name="mediumRntFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.rnt</value>
+            </property>
+            <property name="mediumVisFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.vis</value>
+            </property>
+            <property name="mediumPuvFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.puv</value>
+            </property>
+            <property name="mediumPatFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_Medium.pat</value>
+            </property>
+            <property name="highRcFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.rc.sse</value>
+            </property>
+            <property name="highIwFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.iw.sse</value>
+            </property>
+            <property name="highCawFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.caw</value>
+            </property>
+            <property name="highRntFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.rnt</value>
+            </property>
+            <property name="highVisFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.vis</value>
+            </property>
+            <property name="highPuvFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.puv</value>
+            </property>
+            <property name="highPatFile" type="FilePtr" container="StaticArray" arraySize="1">
+            <value>/Assets/pes16/model/bg/stid/EnlightenOutput/stid_High.pat</value>
+            </property>
+        </staticProperties>
+        <dynamicProperties />
+        </entity>

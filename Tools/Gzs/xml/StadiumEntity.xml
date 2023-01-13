@@ -1,0 +1,26 @@
+
+		<entity class="ShearTransformEntity" classVersion="0" addr="ShearTransAddr" unknown1="64" unknown2="0">
+			<staticProperties>
+				<property name="owner" type="EntityHandle" container="StaticArray" arraySize="1">
+					<value>0x00000000</value>
+				</property>
+				<property name="shearTransform_shear" type="Vector3" container="StaticArray" arraySize="1">
+					<value x="0" y="0" z="0" w="3.760233E-39" />
+				</property>
+			</staticProperties>
+			<dynamicProperties />
+		</entity>
+		<entity class="PivotTransformEntity" classVersion="0" addr="PivotTransAddr" unknown1="80" unknown2="0">
+			<staticProperties>
+				<property name="owner" type="EntityHandle" container="StaticArray" arraySize="1">
+					<value>0x00000000</value>
+				</property>
+				<property name="pivotTransform_pivot" type="Vector3" container="StaticArray" arraySize="1">
+					<value x="0" y="0" z="0" w="0" />
+				</property>
+				<property name="pivotTransform_pivotTranslation" type="Vector3" container="StaticArray" arraySize="1">
+					<value x="0" y="0" z="0" w="0" />
+				</property>
+			</staticProperties>
+			<dynamicProperties />
+		</entity>

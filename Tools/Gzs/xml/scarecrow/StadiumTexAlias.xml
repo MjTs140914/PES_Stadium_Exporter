@@ -1,0 +1,110 @@
+	
+	<entity class="StadiumTexture" classVersion="1" addr="0x00020B00" unknown1="168" unknown2="0">
+	  <staticProperties>
+		<property name="name" type="String" container="StaticArray" arraySize="1">
+		  <value>TexAlias_bsm00__StillCam_Bib</value>
+		</property>
+		<property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+		  <value>0x00000100</value>
+		</property>
+		<property name="textureAlias" type="String" container="StaticArray" arraySize="1">
+		  <value>staff_bsm00</value>
+		</property>
+		<property name="parameterNames" type="String" container="DynamicArray" arraySize="1">
+		  <value>Base_Tex_SRGB</value>
+		</property>
+		<property name="materialNames" type="String" container="DynamicArray" arraySize="1">
+		  <value>m_ca_blou_bib</value>
+		</property>
+		<property name="models" type="EntityPtr" container="DynamicArray" arraySize="35">
+		  <value>0x00000800</value>
+		  <value>0x00000C00</value>
+		  <value>0x00001000</value>
+		  <value>0x00001400</value>
+		  <value>0x00001800</value>
+		  <value>0x00001C00</value>
+		  <value>0x00002000</value>
+		  <value>0x00002400</value>
+		  <value>0x00002800</value>
+		  <value>0x00002C00</value>
+		  <value>0x00003000</value>
+		  <value>0x00003400</value>
+		  <value>0x00003800</value>
+		  <value>0x00003C00</value>
+		  <value>0x00004000</value>
+		  <value>0x00004400</value>
+		  <value>0x00004800</value>
+		  <value>0x00004C00</value>
+		  <value>0x00005000</value>
+		  <value>0x00005400</value>
+		  <value>0x00005800</value>
+		  <value>0x00005C00</value>
+		  <value>0x00006000</value>
+		  <value>0x00006400</value>
+		  <value>0x00006800</value>
+		  <value>0x00006C00</value>
+		  <value>0x00007000</value>
+		  <value>0x00007400</value>
+		  <value>0x00007800</value>
+		  <value>0x00007C00</value>
+		  <value>0x00008000</value>
+		  <value>0x00008400</value>
+		  <value>0x00008800</value>
+		  <value>0x00008C00</value>
+		  <value>0x00009000</value>
+		</property>
+	  </staticProperties>
+	  <dynamicProperties />
+	</entity>
+	<entity class="StadiumTexture" classVersion="1" addr="0x00020C00" unknown1="168" unknown2="0">
+	  <staticProperties>
+		<property name="name" type="String" container="StaticArray" arraySize="1">
+		  <value>TexAlias_bsm03__TVCam_Bib</value>
+		</property>
+		<property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+		  <value>0x00000100</value>
+		</property>
+		<property name="textureAlias" type="String" container="StaticArray" arraySize="1">
+		  <value>staff_bsm03</value>
+		</property>
+		<property name="parameterNames" type="String" container="DynamicArray" arraySize="1">
+		  <value>Base_Tex_SRGB</value>
+		</property>
+		<property name="materialNames" type="String" container="DynamicArray" arraySize="1">
+		  <value>m_tv_parka_bib</value>
+		</property>
+		<property name="models" type="EntityPtr" container="DynamicArray" arraySize="30">
+		  <value>0x0000B000</value>
+		  <value>0x0000A800</value>
+		  <value>0x0000B800</value>
+		  <value>0x0000C800</value>
+		  <value>0x00009C00</value>
+		  <value>0x0000AC00</value>
+		  <value>0x0000B400</value>
+		  <value>0x0000BC00</value>
+		  <value>0x0000C400</value>
+		  <value>0x0000A000</value>
+		  <value>0x0000A400</value>
+		  <value>0x0000C000</value>
+		  <value>0x0000CC00</value>
+		  <value>0x0000D800</value>
+		  <value>0x0000E400</value>
+		  <value>0x00010800</value>
+		  <value>0x00015000</value>
+		  <value>0x00016800</value>
+		  <value>0x00018000</value>
+		  <value>0x00018C00</value>
+		  <value>0x0000F000</value>
+		  <value>0x00011400</value>
+		  <value>0x00012C00</value>
+		  <value>0x00013800</value>
+		  <value>0x0000F800</value>
+		  <value>0x00011C00</value>
+		  <value>0x00014000</value>
+		  <value>0x00015800</value>
+		  <value>0x00017000</value>
+		  <value>0x00019400</value>
+		</property>
+	  </staticProperties>
+	  <dynamicProperties />
+	</entity>

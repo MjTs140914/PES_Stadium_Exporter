@@ -1,0 +1,141 @@
+
+	<setting type="LensFlare" index="%LSize">
+		<param id="texturePath" type="path" index="0" value="/Assets/pes16/model/bg/common/effect/texture/%Ltex" />
+		<param id="texturePath" type="path" index="1" value="/Assets/pes16/model/bg/common/effect/texture/circle.ftex" />
+		<!-- locator -->
+		<param id="trans" type="vector3" value="%tx, %ty, %tz" />
+		<param id="scale" type="vector3" value="20.000000, 20.000000, 1.000000" />
+		<param id="quat" type="vector4" value="%qx, %qz, %qy, %qw" />
+		<param id="intensity" type="float" value="0.050000" />
+		<param id="innerAngle" type="angle" value="1.000000" />
+		<param id="outerAngle" type="angle" value="60.000000" />
+		<param id="falloff" type="float" value="1.000000" />
+		<param id="layerNum" type="uint" value="14" />
+		<!-- layers -->
+		<param id="layerPosition" type="float" index="0" value="0.850000" />
+		<param id="layerScale" type="float" index="0" value="1.000000" />
+		<param id="layerColor" type="vector4" index="0" value="0.000000, 0.094117, 2.000000, 1.000000" />
+		<param id="layerUV0" type="vector2" index="0" value="0.000000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="0" value="0.500000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="0" value="0.000000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="0" value="0.500000, 0.125000" />
+		<param id="layerRotation" type="angle" index="0" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="0" value="1" />
+		<param id="layerPosition" type="float" index="1" value="0.700000" />
+		<param id="layerScale" type="float" index="1" value="0.500000" />
+		<param id="layerColor" type="vector4" index="1" value="0.000000, 0.941176, 2.000000, 1.000000" />
+		<param id="layerUV0" type="vector2" index="1" value="0.000000, 0.500000" />
+		<param id="layerUV1" type="vector2" index="1" value="1.000000, 0.500000" />
+		<param id="layerUV2" type="vector2" index="1" value="0.000000, 0.750000" />
+		<param id="layerUV3" type="vector2" index="1" value="1.000000, 0.750000" />
+		<param id="layerRotation" type="angle" index="1" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="1" value="1" />
+		<param id="layerPosition" type="float" index="2" value="0.600000" />
+		<param id="layerScale" type="float" index="2" value="2.000000" />
+		<param id="layerColor" type="vector4" index="2" value="0.000000, 1.458823, 2.000000, 1.000000" />
+		<param id="layerUV0" type="vector2" index="2" value="0.500000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="2" value="1.000000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="2" value="0.500000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="2" value="1.000000, 0.125000" />
+		<param id="layerRotation" type="angle" index="2" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="2" value="1" />
+		<param id="layerPosition" type="float" index="3" value="0.400000" />
+		<param id="layerScale" type="float" index="3" value="2.000000" />
+		<param id="layerColor" type="vector4" index="3" value="0.000000, 5.000000, 2.352941, 1.000000" />
+		<param id="layerUV0" type="vector2" index="3" value="0.000000, 0.750000" />
+		<param id="layerUV1" type="vector2" index="3" value="1.000000, 0.750000" />
+		<param id="layerUV2" type="vector2" index="3" value="0.000000, 1.000000" />
+		<param id="layerUV3" type="vector2" index="3" value="1.000000, 1.000000" />
+		<param id="layerRotation" type="angle" index="3" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="3" value="1" />
+		<param id="layerPosition" type="float" index="4" value="0.150000" />
+		<param id="layerScale" type="float" index="4" value="2.000000" />
+		<param id="layerColor" type="vector4" index="4" value="0.223529, 0.180762, 0.098178, 1.000000" />
+		<param id="layerUV0" type="vector2" index="4" value="0.000000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="4" value="0.500000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="4" value="0.000000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="4" value="0.500000, 0.125000" />
+		<param id="layerRotation" type="angle" index="4" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="4" value="1" />
+		<param id="layerPosition" type="float" index="5" value="0.100000" />
+		<param id="layerScale" type="float" index="5" value="5.000000" />
+		<param id="layerColor" type="vector4" index="5" value="0.137255, 0.134330, 0.125414, 1.000000" />
+		<param id="layerUV0" type="vector2" index="5" value="0.000000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="5" value="0.500000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="5" value="0.000000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="5" value="0.500000, 0.125000" />
+		<param id="layerRotation" type="angle" index="5" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="5" value="1" />
+		<param id="layerPosition" type="float" index="6" value="-0.290000" />
+		<param id="layerScale" type="float" index="6" value="1.000000" />
+		<param id="layerColor" type="vector4" index="6" value="0.305882, 0.247357, 0.134348, 1.000000" />
+		<param id="layerUV0" type="vector2" index="6" value="0.000000, 0.750000" />
+		<param id="layerUV1" type="vector2" index="6" value="1.000000, 0.750000" />
+		<param id="layerUV2" type="vector2" index="6" value="0.000000, 1.000000" />
+		<param id="layerUV3" type="vector2" index="6" value="1.000000, 1.000000" />
+		<param id="layerRotation" type="angle" index="6" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="6" value="1" />
+		<param id="layerPosition" type="float" index="7" value="-0.350000" />
+		<param id="layerScale" type="float" index="7" value="2.000000" />
+		<param id="layerColor" type="vector4" index="7" value="0.368627, 0.298099, 0.161907, 1.000000" />
+		<param id="layerUV0" type="vector2" index="7" value="0.000000, 0.750000" />
+		<param id="layerUV1" type="vector2" index="7" value="1.000000, 0.750000" />
+		<param id="layerUV2" type="vector2" index="7" value="0.000000, 1.000000" />
+		<param id="layerUV3" type="vector2" index="7" value="1.000000, 1.000000" />
+		<param id="layerRotation" type="angle" index="7" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="7" value="1" />
+		<param id="layerPosition" type="float" index="8" value="-0.425000" />
+		<param id="layerScale" type="float" index="8" value="1.500000" />
+		<param id="layerColor" type="vector4" index="8" value="0.556863, 0.450316, 0.244583, 1.000000" />
+		<param id="layerUV0" type="vector2" index="8" value="0.500000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="8" value="1.000000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="8" value="0.500000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="8" value="1.000000, 0.125000" />
+		<param id="layerRotation" type="angle" index="8" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="8" value="1" />
+		<param id="layerPosition" type="float" index="9" value="-0.700000" />
+		<param id="layerScale" type="float" index="9" value="0.500000" />
+		<param id="layerColor" type="vector4" index="9" value="0.466667, 0.293629, 0.153726, 1.000000" />
+		<param id="layerUV0" type="vector2" index="9" value="0.500000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="9" value="1.000000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="9" value="0.500000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="9" value="1.000000, 0.125000" />
+		<param id="layerRotation" type="angle" index="9" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="9" value="1" />
+		<param id="layerPosition" type="float" index="10" value="-0.800000" />
+		<param id="layerScale" type="float" index="10" value="0.700000" />
+		<param id="layerColor" type="vector4" index="10" value="0.121569, 0.098309, 0.053395, 1.000000" />
+		<param id="layerUV0" type="vector2" index="10" value="0.500000, 0.000000" />
+		<param id="layerUV1" type="vector2" index="10" value="1.000000, 0.000000" />
+		<param id="layerUV2" type="vector2" index="10" value="0.500000, 0.125000" />
+		<param id="layerUV3" type="vector2" index="10" value="1.000000, 0.125000" />
+		<param id="layerRotation" type="angle" index="10" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="10" value="1" />
+		<param id="layerPosition" type="float" index="11" value="-0.850000" />
+		<param id="layerScale" type="float" index="11" value="0.500000" />
+		<param id="layerColor" type="vector4" index="11" value="0.070588, 0.057082, 0.031003, 1.000000" />
+		<param id="layerUV0" type="vector2" index="11" value="0.500000, 0.125000" />
+		<param id="layerUV1" type="vector2" index="11" value="1.000000, 0.125000" />
+		<param id="layerUV2" type="vector2" index="11" value="0.500000, 0.250000" />
+		<param id="layerUV3" type="vector2" index="11" value="1.000000, 0.250000" />
+		<param id="layerRotation" type="angle" index="11" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="11" value="1" />
+		<param id="layerPosition" type="float" index="12" value="-1.000000" />
+		<param id="layerScale" type="float" index="12" value="0.500000" />
+		<param id="layerColor" type="vector4" index="12" value="0.133333, 0.107823, 0.058562, 1.000000" />
+		<param id="layerUV0" type="vector2" index="12" value="0.000000, 0.750000" />
+		<param id="layerUV1" type="vector2" index="12" value="1.000000, 0.750000" />
+		<param id="layerUV2" type="vector2" index="12" value="0.000000, 1.000000" />
+		<param id="layerUV3" type="vector2" index="12" value="1.000000, 1.000000" />
+		<param id="layerRotation" type="angle" index="12" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="12" value="1" />
+		<param id="layerPosition" type="float" index="13" value="-1.100000" />
+		<param id="layerScale" type="float" index="13" value="1.000000" />
+		<param id="layerColor" type="vector4" index="13" value="2.509804, 5.000000, 2.509804, 1.000000" />
+		<param id="layerUV0" type="vector2" index="13" value="0.000000, 0.750000" />
+		<param id="layerUV1" type="vector2" index="13" value="1.000000, 0.750000" />
+		<param id="layerUV2" type="vector2" index="13" value="0.000000, 1.000000" />
+		<param id="layerUV3" type="vector2" index="13" value="1.000000, 1.000000" />
+		<param id="layerRotation" type="angle" index="13" value="0.000000" />
+		<param id="layerAutoRotation" type="uint" index="13" value="1" />
+	</setting>

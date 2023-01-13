@@ -1,0 +1,87 @@
+
+		<entity class="StadiumModel" classVersion="3" addr="%addr" unknown1="400" unknown2="0">
+			<staticProperties>
+				<property name="name" type="String" container="StaticArray" arraySize="1">
+					<value>%name</value>
+				</property>
+				<property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+					<value>0x00000100</value>
+				</property>
+				<property name="parent" type="EntityHandle" container="StaticArray" arraySize="1">
+					<value>0x00000000</value>
+				</property>
+				<property name="transform" type="EntityPtr" container="StaticArray" arraySize="1">
+					<value>%transform</value>
+				</property>
+				<property name="shearTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+					<value>0x00000000</value>
+				</property>
+				<property name="pivotTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+					<value>0x00000000</value>
+				</property>
+				<property name="children" type="EntityHandle" container="List" />
+				<property name="flags" type="uint32" container="StaticArray" arraySize="1">
+					<value>7</value>
+				</property>
+				<property name="modelFile" type="FilePtr" container="StaticArray" arraySize="1">
+					<value>%assetPath</value>
+				</property>
+				<property name="isIsolated" type="bool" container="StaticArray" arraySize="1">
+					<value>false</value>
+				</property>
+				<property name="isDynamic" type="bool" container="StaticArray" arraySize="1">
+					<value>true</value>
+				</property>
+				<property name="lodFarSize" type="float" container="StaticArray" arraySize="1">
+					<value>-1</value>
+				</property>
+				<property name="lodNearSize" type="float" container="StaticArray" arraySize="1">
+					<value>-1</value>
+				</property>
+				<property name="lodPolygonSize" type="float" container="StaticArray" arraySize="1">
+					<value>2</value>
+				</property>
+				<property name="color" type="Color" container="StaticArray" arraySize="1">
+					<value r="1" g="1" b="1" a="1" />
+				</property>
+				<property name="drawRejectionLevel" type="int32" container="StaticArray" arraySize="1">
+					<value>8</value>
+				</property>
+				<property name="drawMode" type="int32" container="StaticArray" arraySize="1">
+					<value>0</value>
+				</property>
+				<property name="rejectFarRangeShadowCast" type="int32" container="StaticArray" arraySize="1">
+					<value>1</value>
+				</property>
+				<property name="direction" type="int32" container="StaticArray" arraySize="1">
+					<value>%direction</value>
+				</property>
+				<property name="kind" type="int32" container="StaticArray" arraySize="1">
+					<value>%kind</value>
+				</property>
+				<property name="demoGroup" type="int32" container="StaticArray" arraySize="1">
+					<value>%demoGroup</value>
+				</property>
+				<property name="customBits" type="uint32" container="StaticArray" arraySize="1">
+					<value>0</value>
+				</property>
+			</staticProperties>
+			<dynamicProperties />
+		</entity>
+		<entity class="TransformEntity" classVersion="0" addr="%transform" unknown1="96" unknown2="0">
+			<staticProperties>
+				<property name="owner" type="EntityHandle" container="StaticArray" arraySize="1">
+					<value>%addr</value>
+				</property>
+				<property name="transform_scale" type="Vector3" container="StaticArray" arraySize="1">
+					<value x="1" y="1" z="1" w="0" />
+				</property>
+				<property name="transform_rotation_quat" type="Quat" container="StaticArray" arraySize="1">
+					<value x="%qx" y="%qy" z="%qz" w="%qw" />
+				</property>
+				<property name="transform_translation" type="Vector3" container="StaticArray" arraySize="1">
+					<value x="%tx" y="%ty" z="%tz" w="0" />
+				</property>
+			</staticProperties>
+			<dynamicProperties />
+		</entity>

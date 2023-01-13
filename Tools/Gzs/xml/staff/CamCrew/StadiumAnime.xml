@@ -1,0 +1,50 @@
+
+    <entity class="StadiumAnime" classVersion="3" addr="0x00000200" unknown1="280" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value>ani_cam00</value>
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x00000100</value>
+        </property>
+        <property name="animationGroup" type="int32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+        <property name="animeFiles" type="FilePtr" container="DynamicArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/staff_cam00.gani</value>
+        </property>
+        <property name="anmSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_anim_skel.ask</value>
+        </property>
+        <property name="renderSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_render_skel.ask</value>
+        </property>
+        <property name="rigFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_skel.frig</value>
+        </property>
+        <property name="sklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high.skl</value>
+        </property>
+        <property name="models" type="EntityPtr" container="DynamicArray" arraySize="18">
+          <value>0x00000300</value>
+          <value>0x00000600</value>
+          <value>0x00000900</value>
+          <value>0x00000C00</value>
+          <value>0x00000F00</value>
+          <value>0x00001200</value>
+          <value>0x00001500</value>
+          <value>0x00001800</value>
+          <value>0x00001B00</value>
+          <value>0x00001E00</value>
+          <value>0x00002100</value>
+          <value>0x00002400</value>
+          <value>0x00002700</value>
+          <value>0x00002A00</value>
+          <value>0x00002D00</value>
+          <value>0x00003000</value>
+          <value>0x00003300</value>
+          <value>0x00003600</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>

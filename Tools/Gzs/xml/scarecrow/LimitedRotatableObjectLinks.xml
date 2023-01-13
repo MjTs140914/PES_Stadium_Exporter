@@ -1,0 +1,9 @@
+		
+		<entity class="LimitedRotatableObjectLinks" classVersion="0" addr="%addr" unknown1="176" unknown2="0">
+			<staticProperties>
+				<property name="name" type="String" container="StaticArray" arraySize="1">
+					<value>%name</value>
+				</property>
+				<property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+					<value>0x00000100</value>
+				</property>

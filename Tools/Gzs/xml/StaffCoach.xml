@@ -1,0 +1,266 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<fox formatVersion="2" fileVersion="0" originalVersion="Sat Jan 09 20:53:38 UTC+07:00 2021">
+  <classes>
+    <class name="Entity" super="" version="2" />
+    <class name="Data" super="Entity" version="2" />
+    <class name="DataSet" super="" version="0" />
+    <class name="StadiumAnime" super="" version="3" />
+    <class name="StadiumModel" super="" version="3" />
+    <class name="TransformEntity" super="" version="0" />
+  </classes>
+  <entities>
+    <entity class="DataSet" classVersion="0" addr="0x936A22D0" unknown1="296" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value hash="0xB8A0BF169F98" />
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="dataList" type="EntityPtr" container="StringMap" arraySize="4">
+          <value key="co_away_anm">0x936A2410</value>
+          <value key="coach02">0x937C28D0</value>
+          <value key="co_home_anm">0x936A2550</value>
+          <value key="coach01">0x937C2A90</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="StadiumAnime" classVersion="3" addr="0x936A2410" unknown1="280" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value>co_away_anm</value>
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x936A22D0</value>
+        </property>
+        <property name="animationGroup" type="int32" container="StaticArray" arraySize="1">
+          <value>4</value>
+        </property>
+        <property name="animeFiles" type="FilePtr" container="DynamicArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/staff_coach00.gani</value>
+        </property>
+        <property name="anmSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_anim_skel.ask</value>
+        </property>
+        <property name="renderSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_render_skel.ask</value>
+        </property>
+        <property name="rigFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_skel.frig</value>
+        </property>
+        <property name="sklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high.skl</value>
+        </property>
+        <property name="models" type="EntityPtr" container="DynamicArray" arraySize="1">
+          <value>0x937C28D0</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="StadiumModel" classVersion="3" addr="0x937C28D0" unknown1="400" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value>coach02</value>
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x936A22D0</value>
+        </property>
+        <property name="parent" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="transform" type="EntityPtr" container="StaticArray" arraySize="1">
+          <value>0x937F08E0</value>
+        </property>
+        <property name="shearTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="pivotTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="children" type="EntityHandle" container="List" />
+        <property name="flags" type="uint32" container="StaticArray" arraySize="1">
+          <value>7</value>
+        </property>
+        <property name="modelFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/common/scenes/st_coach2018B.fmdl</value>
+        </property>
+        <property name="isIsolated" type="bool" container="StaticArray" arraySize="1">
+          <value>false</value>
+        </property>
+        <property name="isDynamic" type="bool" container="StaticArray" arraySize="1">
+          <value>true</value>
+        </property>
+        <property name="lodFarSize" type="float" container="StaticArray" arraySize="1">
+          <value>-1</value>
+        </property>
+        <property name="lodNearSize" type="float" container="StaticArray" arraySize="1">
+          <value>-1</value>
+        </property>
+        <property name="lodPolygonSize" type="float" container="StaticArray" arraySize="1">
+          <value>2</value>
+        </property>
+        <property name="color" type="Color" container="StaticArray" arraySize="1">
+          <value r="1" g="1" b="1" a="1" />
+        </property>
+        <property name="drawRejectionLevel" type="int32" container="StaticArray" arraySize="1">
+          <value>8</value>
+        </property>
+        <property name="drawMode" type="int32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+        <property name="rejectFarRangeShadowCast" type="int32" container="StaticArray" arraySize="1">
+          <value>2</value>
+        </property>
+        <property name="direction" type="int32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+        <property name="kind" type="int32" container="StaticArray" arraySize="1">
+          <value>11</value>
+        </property>
+        <property name="demoGroup" type="int32" container="StaticArray" arraySize="1">
+          <value>2</value>
+        </property>
+        <property name="customBits" type="uint32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="TransformEntity" classVersion="0" addr="0x937F08E0" unknown1="96" unknown2="0">
+      <staticProperties>
+        <property name="owner" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x937C28D0</value>
+        </property>
+        <property name="transform_scale" type="Vector3" container="StaticArray" arraySize="1">
+          <value x="1" y="1" z="1" w="0" />
+        </property>
+        <property name="transform_rotation_quat" type="Quat" container="StaticArray" arraySize="1">
+          <value x="0" y="q_y_away" z="0" w="q_w_away" />
+        </property>
+        <property name="transform_translation" type="Vector3" container="StaticArray" arraySize="1">
+          <value x="r_x_away" y="0" z="r_z_away" w="0" />
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="StadiumAnime" classVersion="3" addr="0x936A2550" unknown1="280" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value>co_home_anm</value>
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x936A22D0</value>
+        </property>
+        <property name="animationGroup" type="int32" container="StaticArray" arraySize="1">
+          <value>5</value>
+        </property>
+        <property name="animeFiles" type="FilePtr" container="DynamicArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/staff_coach01.gani</value>
+        </property>
+        <property name="anmSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_anim_skel.ask</value>
+        </property>
+        <property name="renderSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_render_skel.ask</value>
+        </property>
+        <property name="rigFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high_skel.frig</value>
+        </property>
+        <property name="sklFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/motion/mob_high.skl</value>
+        </property>
+        <property name="models" type="EntityPtr" container="DynamicArray" arraySize="1">
+          <value>0x937C2A90</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="StadiumModel" classVersion="3" addr="0x937C2A90" unknown1="400" unknown2="0">
+      <staticProperties>
+        <property name="name" type="String" container="StaticArray" arraySize="1">
+          <value>coach01</value>
+        </property>
+        <property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x936A22D0</value>
+        </property>
+        <property name="parent" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="transform" type="EntityPtr" container="StaticArray" arraySize="1">
+          <value>0x937F0950</value>
+        </property>
+        <property name="shearTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="pivotTransform" type="EntityPtr" container="StaticArray" arraySize="1">
+          <value>0x00000000</value>
+        </property>
+        <property name="children" type="EntityHandle" container="List" />
+        <property name="flags" type="uint32" container="StaticArray" arraySize="1">
+          <value>7</value>
+        </property>
+        <property name="modelFile" type="FilePtr" container="StaticArray" arraySize="1">
+          <value>/Assets/pes16/model/bg/common/staff/common/scenes/st_coach2018A.fmdl</value>
+        </property>
+        <property name="isIsolated" type="bool" container="StaticArray" arraySize="1">
+          <value>false</value>
+        </property>
+        <property name="isDynamic" type="bool" container="StaticArray" arraySize="1">
+          <value>true</value>
+        </property>
+        <property name="lodFarSize" type="float" container="StaticArray" arraySize="1">
+          <value>-1</value>
+        </property>
+        <property name="lodNearSize" type="float" container="StaticArray" arraySize="1">
+          <value>-1</value>
+        </property>
+        <property name="lodPolygonSize" type="float" container="StaticArray" arraySize="1">
+          <value>2</value>
+        </property>
+        <property name="color" type="Color" container="StaticArray" arraySize="1">
+          <value r="1" g="1" b="1" a="1" />
+        </property>
+        <property name="drawRejectionLevel" type="int32" container="StaticArray" arraySize="1">
+          <value>8</value>
+        </property>
+        <property name="drawMode" type="int32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+        <property name="rejectFarRangeShadowCast" type="int32" container="StaticArray" arraySize="1">
+          <value>2</value>
+        </property>
+        <property name="direction" type="int32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+        <property name="kind" type="int32" container="StaticArray" arraySize="1">
+          <value>11</value>
+        </property>
+        <property name="demoGroup" type="int32" container="StaticArray" arraySize="1">
+          <value>2</value>
+        </property>
+        <property name="customBits" type="uint32" container="StaticArray" arraySize="1">
+          <value>0</value>
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+    <entity class="TransformEntity" classVersion="0" addr="0x937F0950" unknown1="96" unknown2="0">
+      <staticProperties>
+        <property name="owner" type="EntityHandle" container="StaticArray" arraySize="1">
+          <value>0x937C2A90</value>
+        </property>
+        <property name="transform_scale" type="Vector3" container="StaticArray" arraySize="1">
+          <value x="1" y="1" z="1" w="0" />
+        </property>
+        <property name="transform_rotation_quat" type="Quat" container="StaticArray" arraySize="1">
+          <value x="0" y="q_y_home" z="0" w="q_w_home" />
+        </property>
+        <property name="transform_translation" type="Vector3" container="StaticArray" arraySize="1">
+          <value x="r_x_home" y="0" z="r_z_home" w="0" />
+        </property>
+      </staticProperties>
+      <dynamicProperties />
+    </entity>
+  </entities>
+</fox>

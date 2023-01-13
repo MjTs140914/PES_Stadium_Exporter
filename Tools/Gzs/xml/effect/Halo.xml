@@ -1,0 +1,12 @@
+ 
+  <setting type="Halo" index="%hSize">
+    <param id="texturePath" type="path" value="/Assets/pes16/model/bg/common/effect/texture/%hTex" />
+    <param id="pivot" type="vector3" value="%pvx, %pvy, %pvz" />
+    <param id="scale" type="vector3" value="%Sx, %Sy, %Sz" />
+    <param id="quat" type="vector4" value="%qx, %qy, %qz, %qw" />
+    <param id="trans" type="vector3" value="%tx, %ty, %tz" />
+    <param id="color" type="vector4" value="%cR, %cG, %cB, 1.000000" />
+    <param id="fixRotY" type="uint" value="%R" />
+    <param id="alphaAngle" type="angle" value="70.000000" />
+    <param id="alphaFalloff" type="float" value="1.000000" />
+  </setting>

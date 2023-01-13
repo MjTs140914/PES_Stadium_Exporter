@@ -1,0 +1,27 @@
+	
+	<entity class="StadiumAnime" classVersion="3" addr="0xB39B6C90" unknown1="280" unknown2="0">
+		<staticProperties>
+			<property name="name" type="String" container="StaticArray" arraySize="1">
+				<value>ani_walk</value>
+			</property>
+			<property name="dataSet" type="EntityHandle" container="StaticArray" arraySize="1">
+				<value>0xB39B6B50</value>
+			</property>
+			<property name="animationGroup" type="int32" container="StaticArray" arraySize="1">
+				<value>7</value>
+			</property>
+			<property name="animeFiles" type="FilePtr" container="DynamicArray" arraySize="1">
+				<value>/Assets/pes16/model/bg/common/staff/motion/staff_walk00.gani</value>
+			</property>
+			<property name="anmSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+				<value>/Assets/pes16/model/bg/common/staff/motion/mob_high_anim_skel.ask</value>
+			</property>
+			<property name="renderSklFile" type="FilePtr" container="StaticArray" arraySize="1">
+				<value>/Assets/pes16/model/bg/common/staff/motion/mob_high_render_skel.ask</value>
+			</property>
+			<property name="rigFile" type="FilePtr" container="StaticArray" arraySize="1">
+				<value>/Assets/pes16/model/bg/common/staff/motion/mob_high_skel.frig</value>
+			</property>
+			<property name="sklFile" type="FilePtr" container="StaticArray" arraySize="1">
+				<value>/Assets/pes16/model/bg/common/staff/motion/mob_high.skl</value>
+			</property>

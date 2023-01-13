@@ -1,0 +1,17 @@
+
+				</property>
+				<property name="maxRotDegreeLeft" type="float" container="StaticArray" arraySize="1">
+					<value>%maxRotDegreeLeft</value>
+				</property>
+				<property name="maxRotDegreeRight" type="float" container="StaticArray" arraySize="1">
+					<value>%maxRotDegreeRight</value>
+				</property>
+				<property name="maxRotSpeedLeft" type="float" container="StaticArray" arraySize="1">
+					<value>%maxRotSpeedLeft</value>
+				</property>
+				<property name="maxRotSpeedRight" type="float" container="StaticArray" arraySize="1">
+					<value>%maxRotSpeedRight</value>
+				</property>
+			</staticProperties>
+			<dynamicProperties />
+		</entity>
