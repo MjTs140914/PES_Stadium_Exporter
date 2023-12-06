@@ -597,22 +597,12 @@ HaloTexList=[("tex_halo_D00.ftex","D00 - tex_halo_D00","tex_halo_D00.ftex"),
 ]
 				
 def makedir(DirName, isStadium):
-	listDir=[]
-	splitDir = str(DirName).split('\\')
-	for idx in enumerate(splitDir):
-		listDir.append(splitDir[idx[0]])
-		liststr=listDir
-		liststr=str(liststr).replace(","," ")
-		liststr=str(liststr).replace("'","")
-		liststr=str(liststr).replace("[","")
-		liststr=str(liststr).replace("]","")
-		liststr=str(liststr).replace(" ","\\")
-		if isStadium:
-			dirNew = os.path.join(bpy.context.scene.export_path,liststr)
-		else:
-			dirNew = os.path.join(bpy.context.scene.export_path[:-6],liststr)
-		if not os.path.exists(dirNew):
-			os.mkdir(dirNew)
+	if isStadium:
+		dirNew = os.path.join(bpy.context.scene.export_path,DirName)
+	else:
+		dirNew = os.path.join(bpy.context.scene.export_path[:-6],DirName)
+	if not os.path.exists(dirNew):
+		os.makedirs(dirNew, exist_ok=True)
 	return 1
 
 def remove_dir(dirPath):
