@@ -33,7 +33,7 @@ foxroot=["\n\t</entities>"
 		"\n</fox>"
 ]
 
-def makeXMLForStadium(filename,dataList, arraySize, assetpath, shearTransformlist, pivotTransformlist, Stadium_Model,TransformEntityList,Stadium_Kinds,Stadium_Dir):
+def makeXMLForStadium(filename,dataList, arraySize, assetpath, shearTransformlist, pivotTransformlist, Stadium_Model,TransformEntityList,Stadium_Kinds,Stadium_Dir, enable_enlighten):
 	StadiumModel=str()
 	idx1,idx2,idx3=0,0,0
 	stid= bpy.context.scene.STID
@@ -46,14 +46,16 @@ def makeXMLForStadium(filename,dataList, arraySize, assetpath, shearTransformlis
 		for dtlist in dataList:
 			file.write('\n\t\t\t\t\t<value key="{0}">{1}</value>'.format(Stadium_Model[idx1],dtlist))
 			idx1+=1
-		file.write('\n\t\t\t\t\t<value key="EnlightenProbeSet0000">0x00007200</value>')
-		file.write('\n\t\t\t\t\t<value key="EnlightenSystemContainer0000">0x00007500</value>')
+		if enable_enlighten:
+			file.write('\n\t\t\t\t\t<value key="EnlightenProbeSet0000">0x00007200</value>')
+			file.write('\n\t\t\t\t\t<value key="EnlightenSystemContainer0000">0x00007500</value>')
 		file.write('\n\t\t\t\t</property>')
 		for ls in lsRow:
 			file.write(ls)
-		Enlighten=open(PES_Stadium_Exporter.xml_dir+'EnlightenSystem.xml','rt').read()
-		Enlighten=Enlighten.replace("stid",stid)
-		file.write(Enlighten)
+		if enable_enlighten:
+			Enlighten=open(PES_Stadium_Exporter.xml_dir+'EnlightenSystem.xml','rt').read()
+			Enlighten=Enlighten.replace("stid",stid)
+			file.write(Enlighten)
 		for dtlist in dataList:
 			StadiumModel=open(PES_Stadium_Exporter.xml_dir+'StadiumModel.xml','rt').read()
 			StadiumModel=StadiumModel.replace("DirName",Stadium_Model[idx2])

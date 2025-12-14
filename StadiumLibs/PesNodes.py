@@ -2,8 +2,6 @@ import bpy, random, re, os
 from . import IO, Ftex
 from mathutils import Vector
 
-
-
 def findTexture(texture, textureSearchPath):
 	textureFilename = texture.directory.replace('\\', '/').rstrip('/') + '/' + texture.filename.replace('\\', '/').lstrip('/')
 	textureFilenameComponents = tuple(filter(None, textureFilename.split('/')))
@@ -51,20 +49,20 @@ def findTexture(texture, textureSearchPath):
 	
 	return None
 
-def createNodes(blenderMaterial):
-	 #Only one time create get exception from TRM Subsurface, and will create in exception
-	try:
-		blenderMaterial.node_tree.nodes.get('TRM Subsurface').name
-	except:
-		new_group_node = blenderMaterial.node_tree.nodes.new('ShaderNodeGroup')
-		new_group_node.node_tree = bpy.data.node_groups['TRM Subsurface']
-		blenderMaterial.node_tree.nodes['Group'].name = 'TRM Subsurface'
-		new_group_node = blenderMaterial.node_tree.nodes.new('ShaderNodeGroup')
-		new_group_node.node_tree = bpy.data.node_groups['SRM Seperator']
-		blenderMaterial.node_tree.nodes['Group'].name = 'SRM Seperator'
-		new_group_node = blenderMaterial.node_tree.nodes.new('ShaderNodeGroup')
-		new_group_node.node_tree = bpy.data.node_groups['NRM Converter']
-		blenderMaterial.node_tree.nodes['Group'].name = 'NRM Converter'
+def createShaderNodeGroup(blenderMaterial):
+
+    sng = "ShaderNodeGroup"
+    groups = ("NRM Converter", "SRM Seperator", "TRM Subsurface")
+    nodes = blenderMaterial.node_tree.nodes
+    node_groups = bpy.data.node_groups
+    for group_name in groups:
+        if group_name in nodes:
+            continue
+        if group_name not in node_groups:
+            continue
+        new_group_node = nodes.new(sng)
+        new_group_node.node_tree = node_groups[group_name]
+        new_group_node.name = group_name
 
 def addTexture(context, blenderMaterial, textureRole, texture, textureIDs, uvMapColor, uvMapNormals, textureSearchPath, loadTextures, texturePath):
 
@@ -82,7 +80,7 @@ def addTexture(context, blenderMaterial, textureRole, texture, textureIDs, uvMap
 		else:
 			blenderImage = bpy.data.images.new(texture.filename, width=0, height=0)
 		blenderImage.source = 'FILE'
-		createNodes(blenderMaterial)
+		createShaderNodeGroup(blenderMaterial)
 
 		filename = findTexture(texture, textureSearchPath)
 		if filename is None:
@@ -136,9 +134,9 @@ def addTexture(context, blenderMaterial, textureRole, texture, textureIDs, uvMap
 		SRM_Seperator.location = Vector((-200, 0))
 		NRM_Converter = blenderMaterial.node_tree.nodes['NRM Converter']
 		NRM_Converter.location = Vector((-200, -200))
-		blenderMaterial.node_tree.links.new(TRM_Subsurface.outputs['Subsurface'], principled.inputs['Subsurface'])
-		blenderMaterial.node_tree.links.new(TRM_Subsurface.outputs['Subsurface Color'], principled.inputs['Subsurface Color'])
-		blenderMaterial.node_tree.links.new(SRM_Seperator.outputs['Specular'], principled.inputs['Specular'])
+		blenderMaterial.node_tree.links.new(TRM_Subsurface.outputs['Subsurface'], principled.inputs['Subsurface Scale'])
+		blenderMaterial.node_tree.links.new(TRM_Subsurface.outputs['Subsurface Color'], principled.inputs['Subsurface Radius'])
+		blenderMaterial.node_tree.links.new(SRM_Seperator.outputs['Specular'], principled.inputs['Specular IOR Level'])
 		blenderMaterial.node_tree.links.new(SRM_Seperator.outputs['Roughness'], principled.inputs['Roughness'])
 		blenderMaterial.node_tree.links.new(NRM_Converter.outputs['Normal'], principled.inputs['Normal'])
 		blenderImage.colorspace_settings.name = 'Non-Color'		

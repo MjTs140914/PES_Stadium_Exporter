@@ -1,0 +1,37 @@
+
+	<setting type="LightBillboard" index="iSize">
+		<param id="texturePath" type="path" index="0" value="/Assets/pes16/model/bg/common/effect/texture/%LT" />
+		<param id="texturePath" type="path" index="1" value="/Assets/pes16/model/bg/common/effect/texture/circle.ftex" />
+		<param id="locatorPath" type="path" value="/Assets/pes16/model/bg/stid/effect/locator/locstar.model" />
+		<param id="scaleAtt" type="vector3" value="1.000000, 0.000000, 0.000000" />
+		<param id="scalePhi" type="angle" value="60.000000" />
+		<param id="scaleTheta" type="angle" value="10.000000" />
+		<param id="scaleFalloff" type="float" value="24.000000" />
+		<param id="scaleMin" type="float" value="5.000000" />
+		<param id="scaleMax" type="float" value="20.000000" />
+		<param id="alphaAtt" type="vector3" value="1.000000, 0.000000, 0.000000" />
+		<param id="alphaPhi" type="angle" value="0.000000" />
+		<param id="alphaTheta" type="angle" value="10.000000" />
+		<param id="alphaFalloff" type="float" value="1.000000" />
+		<param id="alphaMin" type="float" value="0.100000" />
+		<param id="alphaMax" type="float" value="0.500000" />
+		<param id="gammaAtt" type="vector3" value="1.000000, 0.000000, 0.000000" />
+		<param id="gammaPhi" type="float" value="180.000000" />
+		<param id="gammaTheta" type="float" value="0.000000" />
+		<param id="gammaFalloff" type="float" value="1.000000" />
+		<param id="gammaMin" type="float" value="1.000000" />
+		<param id="gammaMax" type="float" value="1.000000" />
+		<param id="rot" type="angle" value="%LR.000000" />
+		<param id="intensity" type="float" value="1.000000" />
+		<param id="gamma" type="float" value="1.000000" />
+		<param id="dirRandAmp" type="float" value="0.000000" />
+		<param id="dirRandSeed" type="uint" value="1234567" />
+		<param id="numRectPerStar" type="uint" value="1" />
+		<param id="starRectWidth" type="float" value="1.000000" />
+		<param id="starRectHeight" type="float" value="1.000000" />
+		<param id="useCamDir" type="uint" value="0" />
+		<param id="colors" type="vector4" index="0" value="1.000000, 1.000000, 1.000000, 1.000000" />
+		<param id="colors" type="vector4" index="1" value="1.000000, 1.000000, 1.000000, 1.000000" />
+		<param id="colors" type="vector4" index="2" value="1.000000, 1.000000, 1.000000, 1.000000" />
+		<param id="colors" type="vector4" index="3" value="1.000000, 1.000000, 1.000000, 1.000000" />
+	</setting>

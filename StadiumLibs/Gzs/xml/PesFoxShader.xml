@@ -1,0 +1,308 @@
+<!-- Shader collection for PES 
+
+You can add this shader yourself, follow the example below
+
+These are some of the original shaders from KONAMI: https://pastebin.com/raw/Cpz6bvW6
+
+-->
+
+<FoxShader>
+	<FoxShader shader="pes3ddf_pitch_2020" technique="pes3DDF_Pitch2020">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="Base_Tex_2_SRGB"/>
+		<Parameter textures="GrainNormal_Tex_LIN"/>
+		<Parameter textures="SlopeTable_Tex_LIN"/>
+		<Parameter textures="Mask_Tex_SRGB"/>
+		<Parameter textures="Grain_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="205.0" y="0" z="0" w="0"/>
+		<Parameter vector="EmissiveParam0" x="0.05" y="0" z="0" w="0"/>
+		<Parameter vector="EmissiveParam1" x="0.10" y="0" z="0" w="0"/>
+		<Parameter vector="EmissiveParam2" x="17.094" y="0" z="0" w="0"/>
+		<Parameter vector="AOParamX" x="1" y="0" z="0" w="0"/>
+		<Parameter vector="AOParamY" x="0.1" y="0" z="0" w="0"/>
+		<Parameter vector="AOParamZ" x="1.5" y="0" z="0" w="0"/>
+		<Parameter vector="AOParamW" x="0.85" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="32.0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="24.0" y="0" z="0" w="0"/>
+		<Parameter vector="NormalFlatness" x="0.5" y="0" z="0" w="0"/>
+		<Parameter vector="RepairColor" x="0.312655" y="0.402" z="0" w="1"/>
+		<Parameter vector="CameraVectorBlend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="WithersParameter0" x="0.78" y="0" z="0" w="0"/>
+		<Parameter vector="WithersParameter1" x="0.78" y="0" z="0" w="0"/>
+		<Parameter vector="WithersParameter2" x="0.961" y="0" z="0" w="0"/>
+		<Parameter vector="WithersParameter3" x="0.098" y="0" z="0" w="0"/>
+		<Parameter vector="WithersParameter4" x="0.071" y="0" z="0" w="0"/>
+		<Parameter vector="WithersParameter5" x="0.039" y="0" z="0" w="0"/>
+		<Parameter vector="SrmParameter0" x="1.0" y="0" z="0" w="0"/>
+		<Parameter vector="SrmParameter1" x="0.239" y="0" z="0" w="0"/>
+		<Parameter vector="SrmParameter2" x="0.196" y="0" z="0" w="0"/>
+		<Parameter vector="SrmParameter3" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SrmParameter4" x="0.761" y="0" z="0" w="0"/>
+		<Parameter vector="SrmParameter5" x="0.196" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_4mt_subnorm" technique="fox3DDF_Blin_SubNorm_4MT">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MatParamMap_Tex_LIN"/>
+		<Parameter textures="SubNormalMap_Tex_NRM"/>
+		<Parameter textures="SubNormalMask_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_1" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_2" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_3" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SubNormal_Blend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin" technique="fox3DDF_Blin">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_ln" technique="fox3DDF_Blin_LNM">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_ggx_decal" technique="fox3DDC_GGX">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MetalnessMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="29" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox_3ddf_ggx_nrmuv" technique="fox3DDF_GGX">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MetalnessMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="18" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_ggx" technique="fox3DDF_GGX_LNM">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MetalnessMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_decal" technique="fox3DDC_Blin">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3dfw_glass" technique="fox3DFW_Glass">
+		<Parameter textures="Base_Tex_LIN"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="GlassReflection_Tex_SRGB"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="ReflectionColor" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="GlassColor" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="GlassRoughness" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="pes_3dfw_glass2" technique="pes3DFW_Glass2">
+		<Parameter textures="Base_Tex_LIN"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="GlassReflection_Tex_SRGB"/>
+		<Parameter textures="GlassReflectionMask_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="54" y="0" z="0" w="0"/>
+		<Parameter vector="ReflectionIntensity" x="1" y="0" z="0" w="0"/>
+		<Parameter vector="GlassRoughness" x="0.20" y="0" z="0" w="0"/>
+		<Parameter vector="GlassFlatness" x="0.10" y="0" z="0" w="0"/>
+		<Parameter vector="PCBoxCenter" x="0" y="15" z="0" w="1"/>
+		<Parameter vector="PCBoxSize" x="250" y="80" z="200" w="1"/>
+    </FoxShader>
+	<FoxShader shader="pes_3dfw_glass3" technique="pes3DFW_Glass3">
+		<Parameter textures="Base_Tex_LIN"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="GlassReflectionMask_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="26" y="0" z="0" w="0"/>
+		<Parameter vector="ReflectionIntensity" x="4" y="0" z="0" w="0"/>
+		<Parameter vector="GlassRoughness" x="0.09" y="0" z="0" w="0"/>
+		<Parameter vector="GlassFlatness" x="0.45" y="0" z="0" w="0"/>
+		<Parameter vector="DesaturationStrength" x="0.85" y="0" z="0" w="0"/>
+		<Parameter vector="DesaturationAltitude" x="0.50" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="pes_3dfw_const_srgb_bill" technique="pes3DFW_Constant_SRGB_Bill">
+		<Parameter textures="Base_Tex_SRGB_1"/>
+		<Parameter textures="Base_Tex_SRGB_2"/>
+		<Parameter textures="Led_Mask_Tex_LIN"/>
+		<Parameter vector="SelfColor" x="1" y="1" z="1" w="1"/>
+		<Parameter vector="SelfColorIntensity" x="50000" y="0" z="0" w="0"/>
+		<Parameter vector="UvMatrix_0" x="1" y="0" z="0" w="0"/>
+		<Parameter vector="UvMatrix_1" x="0" y="1" z="0" w="0"/>
+		<Parameter vector="UvMatrix_2" x="0" y="0" z="1" w="0"/>
+		<Parameter vector="UvMatrix_3" x="0" y="0" z="0" w="1"/>
+		<Parameter vector="DBG_Scale_Type" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="ScaleUParam" x="1" y="0" z="0" w="0"/>
+		<Parameter vector="ScaleVParam" x="1" y="0" z="0" w="0"/>
+		<Parameter vector="ScrollUParam" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="ScrollVParam" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MaskRepeatParam" x="80" y="0" z="0" w="0"/>
+		<Parameter vector="FadeColor" x="1" y="1" z="1" w="1"/>
+		<Parameter vector="FadeValue" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<!-- For PES2019 Pitch Shader -->
+	<FoxShader shader="pes3ddf_pitch_2019_v2" technique="pes3DDF_Pitch2019_V2">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="Base_Tex_2_SRGB"/>
+		<Parameter textures="GrainNormal_Tex_LIN"/>
+		<Parameter textures="GroundBase_Tex_SRGB"/>
+		<Parameter textures="Mask_Tex_SRGB"/>
+		<Parameter textures="Grain_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="AOValue" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="AOFresnel" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SubNormal_Blend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="Parameter0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="Parameter1" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="pes3ddf_pitch_2019" technique="pes3DDF_Pitch2019">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="Base_Tex_2_SRGB"/>
+		<Parameter textures="GrainNormal_Tex_LIN"/>
+		<Parameter textures="GroundBase_Tex_SRGB"/>
+		<Parameter textures="Mask_Tex_SRGB"/>
+		<Parameter textures="Grain_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="AOValue" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="AOFresnel" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SubNormal_Blend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="Parameter0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="Parameter1" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<!-- For PES 2018 Pitch shader -->
+	<FoxShader shader="pes_3ddf_pitch" technique="pes3DDF_Pitch">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="Base_Tex_2_SRGB"/>
+		<Parameter textures="GrainNormal_Tex_LIN"/>
+		<Parameter textures="GroundBase_Tex_SRGB"/>
+		<Parameter textures="Mask_Tex_SRGB"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="AOValue" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="AOFresnel" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SubNormal_Blend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SphereScaleX" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SphereScaleY" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SphereScaleZ" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="BackFaceScaleX" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="BackFaceScaleY" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="BackFaceScaleZ" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_4mt" technique="fox3DDF_Blin_4MT">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MatParamMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_1" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_2" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_3" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="pes_3ddc_puddle_ggx" technique="pes3DDC_Puddle_GGX">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="RoughnessMap_Tex_LIN"/>
+		<Parameter textures="Mask_Tex_LIN"/>
+		<Parameter textures="SubNormalMap_Tex_NRM"/>
+		<Parameter vector="PuddleCurTime" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="PuddleSpeed1U" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="PuddleSpeed1V" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="PuddleSpeed2U" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="PuddleSpeed2V" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox_3ddf_ggx_layer_maskuv_nrmuv" technique="fox3DDF_GGX_LayerBl_MaskUV_NrmUV">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MetalnessMap_Tex_LIN"/>
+		<Parameter textures="Layer_Tex_SRGB"/>
+		<Parameter textures="LayerMask_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="UShift_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VShift_UV" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_layerb_subnm_mu" technique="fox3DDF_Blin_LayerBl_SubNorm_MaskUV">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="Layer_Tex_SRGB"/>
+		<Parameter textures="LayerMask_Tex_LIN"/>
+		<Parameter textures="SubNormalMap_Tex_NRM"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_1" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_2" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_3" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="UShift_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VShift_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SubNormal_Blend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_SubNorm_UV" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_3mt" technique="fox3DDF_Blin_3MT">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="MatParamMap_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_1" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_2" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_subnorm" technique="fox3DDF_Blin_SubNorm">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="SubNormalMap_Tex_NRM"/>
+		<Parameter textures="SubNormalMask_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="SubNormal_Blend" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="UShift_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VShift_UV" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+	<FoxShader shader="fox3ddf_blin_layer_mul" technique="fox3DDF_Blin_LayerMul">
+		<Parameter textures="Base_Tex_SRGB"/>
+		<Parameter textures="NormalMap_Tex_NRM"/>
+		<Parameter textures="SpecularMap_Tex_LIN"/>
+		<Parameter textures="Layer_Tex_SRGB"/>
+		<Parameter textures="LayerMask_Tex_LIN"/>
+		<Parameter vector="MatParamIndex_0" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_1" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_2" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="MatParamIndex_3" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="URepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VRepeat_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="UShift_UV" x="0" y="0" z="0" w="0"/>
+		<Parameter vector="VShift_UV" x="0" y="0" z="0" w="0"/>
+    </FoxShader>
+</FoxShader>

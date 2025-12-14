@@ -278,7 +278,7 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 		bpy.context.collection.objects.link(blenderArmatureObject)
 		bpy.context.view_layer.objects.active = blenderArmatureObject
 		
-		bpy.ops.object.mode_set(context.copy(), mode = 'EDIT')
+		bpy.ops.object.mode_set(mode='EDIT')
 		
 		bonesByName = {}
 		for bone in fmdl.bones:
@@ -288,7 +288,7 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 		for bone in fmdl.bones:
 			addBone(blenderArmature, bone, boneIDs, bonesByName)
 
-		bpy.ops.object.mode_set(context.copy(), mode = 'OBJECT')
+		bpy.ops.object.mode_set(mode = 'OBJECT')
 		bpy.data.objects[armatureObjectID].hide_viewport = True
 		return (armatureObjectID, boneIDs)
 	
@@ -322,53 +322,64 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 		if len(options) > 0:
 			return options[0][0]
 		return None
-	
+
 	def importMesh(mesh, name, fmdl, materialIDs, armatureObjectID, boneIDs):
 		blenderMesh = bpy.data.meshes.new(name)
-		
-		#
-		# mesh.vertices does not correspond either to the blenderMesh.vertices
-		# nor the blenderMesh.loops, but rather the unique values of blenderMesh.loops.
-		# The blenderMesh.vertices correspond to the unique vertex.position values in mesh.vertices.
-		#
-		
+		blenderMeshObject = bpy.data.objects.new(name, blenderMesh)
+		bpy.context.collection.objects.link(blenderMeshObject)
+
 		vertexIndices = {}
 		vertexVertices = []
 		for vertex in mesh.vertices:
 			if vertex.position not in vertexIndices:
 				vertexIndices[vertex.position] = len(vertexIndices)
 				vertexVertices.append(vertex)
+
 		loopVertices = list(itertools.chain.from_iterable([reversed(face.vertices) for face in mesh.faces]))
-		
+
 		blenderMesh.vertices.add(len(vertexVertices))
 		blenderMesh.vertices.foreach_set("co", tuple(itertools.chain.from_iterable([
 			(vertex.position.x, -vertex.position.z, vertex.position.y) for vertex in vertexVertices
 		])))
-		
+
 		blenderMesh.loops.add(len(mesh.faces) * 3)
 		blenderMesh.loops.foreach_set("vertex_index", tuple([vertexIndices[vertex.position] for vertex in loopVertices]))
-		
+
 		blenderMesh.polygons.add(len(mesh.faces))
 		blenderMesh.polygons.foreach_set("loop_start", tuple(range(0, 3 * len(mesh.faces), 3)))
 		blenderMesh.polygons.foreach_set("loop_total", [3 for face in mesh.faces])
 		blenderMesh.polygons.foreach_set("use_smooth", [importSettings.fixMeshsmooth] * len(blenderMesh.polygons))
-		
-		blenderMesh.update(calc_edges = True)
-		
+
+		blenderMesh.update(calc_edges=True)
+
 		blenderMaterial = bpy.data.materials[materialIDs[mesh.materialInstance]]
-		
+
 		if mesh.vertexFields.hasNormal:
-			def normalize(vector):
-				(x, y, z) = vector
-				size = (x ** 2 + y ** 2 + z ** 2) ** 0.5
-				if size < 0.01:
-					return (x, y, z)
-				return (x / size, y / size, z / size)
-			blenderMesh.normals_split_custom_set([
-				normalize((vertex.normal.x, -vertex.normal.z, vertex.normal.y)) for vertex in loopVertices
-			])
-			blenderMesh.use_auto_smooth = True
-		
+			
+			raw_normals = [
+				(vertex.normal.x, -vertex.normal.z, vertex.normal.y)
+				for vertex in loopVertices
+			]
+
+			if len(raw_normals) == len(blenderMesh.loops):
+				custom_normals = []
+				for n in raw_normals:
+					try:
+						v = Vector(n)
+						v.normalize()
+						custom_normals.append(v)
+					except:
+						custom_normals.append(Vector((0.0, 0.0, 1.0)))
+
+				try:
+					blenderMeshObject.data.use_auto_smooth = True
+					blenderMeshObject.data.auto_smooth_angle = 0.523599
+					blenderMesh.normals_split_custom_set(custom_normals)
+				except:
+					pass
+
+			blenderMesh.update()
+
 		if mesh.vertexFields.hasColor:
 			colorLayer = blenderMesh.vertex_colors.new()
 			colorLayer.data.foreach_set("color", tuple(itertools.chain.from_iterable([
@@ -376,43 +387,39 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 			])))
 			colorLayer.active = False
 			colorLayer.active_render = False
-		
+
 		if mesh.vertexFields.uvCount >= 1:
-			uvTexture = blenderMesh.uv_layers.new(name = UV_MAP_COLOR)
+			uvTexture = blenderMesh.uv_layers.new(name=UV_MAP_COLOR)
 			uvLayer = blenderMesh.uv_layers[uvTexture.name]
-			
 			uvLayer.data.foreach_set("uv", tuple(itertools.chain.from_iterable([
 				(vertex.uv[0].u, 1.0 - vertex.uv[0].v) for vertex in loopVertices
 			])))
 			uvTexture.active = True
 			uvTexture.active_clone = True
 			uvTexture.active_render = True
-		
+
 		if mesh.vertexFields.uvCount >= 2 and 0 not in mesh.vertexFields.uvEqualities[1]:
-			uvTexture = blenderMesh.uv_layers.new(name = UV_MAP_NORMALS)
+			uvTexture = blenderMesh.uv_layers.new(name=UV_MAP_NORMALS)
 			uvLayer = blenderMesh.uv_layers[uvTexture.name]
-			
 			uvLayer.data.foreach_set("uv", tuple(itertools.chain.from_iterable([
 				(vertex.uv[1].u, 1.0 - vertex.uv[1].v) for vertex in loopVertices
 			])))
-		
+
 		blenderMesh.materials.append(blenderMaterial)
-		
+
 		blenderMesh.fmdl_alpha_enum = mesh.alphaEnum
 		blenderMesh.fmdl_shadow_enum = mesh.shadowEnum
-		
-		blenderMeshObject = bpy.data.objects.new(blenderMesh.name, blenderMesh)
+
 		meshObjectID = blenderMeshObject.name
-		bpy.context.collection.objects.link(blenderMeshObject)
-		
 		if mesh.vertexFields.hasBoneMapping:
 			vertexGroupIDs = addSkeletonMeshModifier(blenderMeshObject, mesh.boneGroup, armatureObjectID, boneIDs)
 			for i in range(len(vertexVertices)):
 				for bone in vertexVertices[i].boneMapping:
 					weight = vertexVertices[i].boneMapping[bone]
 					blenderMeshObject.vertex_groups[vertexGroupIDs[bone]].add((i, ), weight, 'REPLACE')
-		
+
 		return meshObjectID
+
 	
 	def importMeshes(context, fmdl, materialIDs, armatureObjectID, boneIDs):
 		meshNames = {}
@@ -433,7 +440,7 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 	
 	def addMeshGroup(context, meshGroup, meshObjectIDs, importBoundingBoxMode):
 		if len(meshGroup.meshes) == 0 and len(meshGroup.children) == 1 and meshGroup.name == "":
-    			return addMeshGroup(context, meshGroup.children[0], meshObjectIDs, importBoundingBoxMode)
+				return addMeshGroup(context, meshGroup.children[0], meshObjectIDs, importBoundingBoxMode)
 		
 		if len(meshGroup.meshes) == 1:
 			blenderMeshGroupObject = bpy.data.objects[meshObjectIDs[meshGroup.meshes[0]]]
@@ -449,7 +456,7 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 		
 		for mesh in meshGroup.meshes:
 			if (
-				   importBoundingBoxMode == 'ALL'
+				importBoundingBoxMode == 'ALL'
 				or (importBoundingBoxMode == 'CUSTOM' and 'custom-bounding-box-meshes' in mesh.extensionHeaders)
 			):
 				minCoordinates = (
@@ -511,7 +518,7 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 	else:
 		activeObjectID = bpy.data.objects.find(context.active_object.name)
 	if context.mode != 'OBJECT':
-		bpy.ops.object.mode_set(context.copy(), mode = 'OBJECT')
+		bpy.ops.object.mode_set(mode = 'OBJECT')
 	
 	
 	
@@ -556,7 +563,7 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 	
 	
 	if context.mode != 'OBJECT':
-		bpy.ops.object.mode_set(context.copy(), mode = 'OBJECT')
+		bpy.ops.object.mode_set(mode = 'OBJECT')
 	if activeObjectID != None:
 		blenderArmatureObject = bpy.data.objects[activeObjectID]
 	
@@ -715,7 +722,7 @@ def exportFmdl(context, rootObjectName, exportSettings=None):
 			blenderBmesh.to_mesh(modifiedBlenderMesh)
 			blenderBmesh.free()
 		
-		modifiedBlenderMesh.use_auto_smooth = True
+		# modifiedBlenderMesh.use_auto_smooth = True
 		modifiedBlenderMesh.calc_tangents(uvmap=uvLayerColor)
 		if uvLayerNormal is None:
 			uvLayerTangent = uvLayerColor

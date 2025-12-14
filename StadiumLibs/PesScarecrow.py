@@ -29,17 +29,6 @@ scrAsset=["/Assets/pes16/model/bg/common/static_obj/so_cam_blou_bib_a.fmdl",
 result = None
 objlist=[]
 
-# Select multiple object hierarchy
-def SelectableObj(child):
-	bpy.ops.object.select_all(action='DESELECT')
-
-	child.select_set(True)
-	for ob in bpy.data.objects[child.name].children[:1]:
-		ob.select_set(True)
-		if ob is not None:
-			for ob2 in bpy.data.objects[ob.name].children:
-				if ob2 is not None and  ob2.type == "MESH":
-					ob2.select_set(True)
 
 # Parsing xml dictionary this script created by themex, full credits for him
 def xmlParser(filename):
@@ -98,94 +87,126 @@ def LimitedRotatable_ObjectLinks(self,context,fox2xml):
 									_packagePathHash_.append(_packagePathHash)
 							_linksBaseName.append(_modelName)
 							_linksName[_modelName]=_linksName_
-							
-def Settings(self,context,fox2xml):
-	LimitedRotatable_ObjectLinks(self,context,fox2xml)
-	idx=0
 
-	# We need get fullname in xml before applied value and duplicate object
-	model_transform_dict2 = xmlParser(fox2xml)
-	for model in model_transform_dict2.keys():
-		fmdl_name = model.find('staticProperties').findall('property')[8].find('value').text
-		fmdl_name = os.path.splitext(fmdl_name)
-		fmdl_name = str(fmdl_name[0]).split('/')[-1]
-		objlist.append(fmdl_name)
 
-	# Applied value to each object in xml and duplicate object length in xml
+def duplicate_hierarchy(original_root, new_name):
+
+	new_root = original_root.copy()
+	bpy.context.collection.objects.link(new_root)
+	new_root.name = new_name
+
+	for child in original_root.children:
+		new_child = child.copy()
+
+		if child.type == "MESH":
+			new_child.data = child.data.copy()
+
+		bpy.context.collection.objects.link(new_child)
+		new_child.parent = new_root
+		new_child.matrix_parent_inverse = new_root.matrix_world.inverted()
+
+		for subc in child.children:
+			new_sub = subc.copy()
+			if subc.type == "MESH":
+				new_sub.data = subc.data.copy()
+
+			bpy.context.collection.objects.link(new_sub)
+			new_sub.parent = new_child
+			new_sub.matrix_parent_inverse = new_child.matrix_world.inverted()
+
+	return new_root
+
+
+def apply_xml(ob, model, transform):
+
+	props = model.find('staticProperties').findall('property')
+
+	ob.scrName = props[0].find('value').text
+	ob.scrTransformEntity = props[3].find('value').text
+	ob.scrDirection = int(props[18].find('value').text)
+	ob.scrKind      = int(props[19].find('value').text)
+	ob.scrDemoGroup = int(props[20].find('value').text)
+
+	for p in transform.find('staticProperties').findall('property'):
+		addr = p.find('value').text
+		if addr:
+			ob.scrEntityPtr = addr
+
+		v = p.find('value')
+		t = p.get('name')
+
+		if t == 'transform_rotation_quat':
+			qx, qy, qz, qw = v.get('x'), v.get('y'), v.get('z'), v.get('w')
+			if None not in (qx, qy, qz, qw):
+				ob.rotation_mode = "QUATERNION"
+				ob.rotation_quaternion.w = float(qw)
+				ob.rotation_quaternion.x = float(qx)
+				ob.rotation_quaternion.y = float(qz) * -1
+				ob.rotation_quaternion.z = float(qy)
+
+		if t == 'transform_translation':
+			tx, ty, tz, tw = v.get('x'), v.get('y'), v.get('z'), v.get('w')
+			if None not in (tx,ty,tz,tw):
+				ob.location.x = float(tx)
+				ob.location.y = float(tz) * -1
+				ob.location.z = float(ty)
+
+
+
+def Settings(self, context, fox2xml):
+
+	LimitedRotatable_ObjectLinks(self, context, fox2xml)
+	idx = 0
+
+	model_transform_dict = xmlParser(fox2xml)
+
+	xml_map = {}
+	for model in model_transform_dict.keys():
+		props = model.find('staticProperties').findall('property')
+		fmdl_path = props[8].find('value').text
+		fmdl_name = os.path.splitext(fmdl_path)[0].split('/')[-1]
+
+		if fmdl_name not in xml_map:
+			xml_map[fmdl_name] = []
+		xml_map[fmdl_name].append(model)
+
 	for ob in bpy.data.objects[context.scene.part_info].children:
-		if ob.type == "EMPTY":
-			model_transform_dict = xmlParser(fox2xml)
-			if ob.name in ObjectLinksList:
-				ob.scrLimitedRotatable = True
-				ob.EntityObjectLinks=_linksaddr[idx]
-				ob.ObjectLinksName = _linksName[_linksBaseName[idx]]
-				ob.packagePathHash = str(_packagePathHash_[idx])
-				ob.maxRotDegreeLeft = int(_maxRotDegreeLeft[idx])
-				ob.maxRotDegreeRight = int(_maxRotDegreeRight[idx])
-				ob.maxRotSpeedLeft = int(_maxRotSpeedLeft[idx])
-				ob.maxRotSpeedRight = int(_maxRotSpeedRight[idx])
-				idx+=1
-			for model in model_transform_dict.keys():
-				model_name = model.find('staticProperties').findall('property')[0].find('value').text
-				fmdl_name = model.find('staticProperties').findall('property')[8].find('value').text
-				if ob.name in fmdl_name:
-					transformEntityPtr = model.find('staticProperties').findall('property')[3].find('value').text
-					_direction = model.find('staticProperties').findall('property')[18].find('value').text
-					_kind = model.find('staticProperties').findall('property')[19].find('value').text
-					_demoGroup = model.find('staticProperties').findall('property')[20].find('value').text
-					transform = model_transform_dict[model]
 
-					for property in transform.find('staticProperties').findall('property'):
-						addr=property.find('value').text
-						if addr is not None:
-							ob.scrName = model_name
-							ob.scrEntityPtr= addr
-							ob.scrTransformEntity = transformEntityPtr
-							ob.scrDirection = int(_direction)
-							ob.scrKind = int(_kind)
-							ob.scrDemoGroup = int(_demoGroup)
+		if ob.type != "EMPTY":
+			continue
 
-						property_val = property.find('value')
-						transform_type=property.get('name')	
-						if transform_type=='transform_rotation_quat':
-							qx,qy,qz,qw= property_val.get('x'), property_val.get('y'), property_val.get('z'), property_val.get('w')
-							if (qx,qy,qz,qw) is not None:
-								ob.rotation_mode = "QUATERNION"
-								ob.rotation_quaternion.w = float(qw)
-								ob.rotation_quaternion.x = float(qx)
-								ob.rotation_quaternion.y = float(qz)*-1
-								ob.rotation_quaternion.z = float(qy)
-						if transform_type=='transform_translation':
-							tx,ty,tz,tw= property_val.get('x'), property_val.get('y'), property_val.get('z'), property_val.get('w')
-							if (tx,ty,tz,tw) is not None:
-								ob.location.x = float(tx)
-								ob.location.y = float(tz)*-1
-								ob.location.z = float(ty)
+		base_name = ob.name
+		if base_name not in xml_map:
+			continue
 
-					# Actually need duplicate object by length-1 of object in xml, but this no (wee fix it in last loop) 
-					SelectableObj(ob)
-					bpy.ops.object.duplicate()
-	
-	del_obj(context)
+		xml_list = xml_map[base_name]
+		xml_count = len(xml_list)
+
+		base_model = xml_list[0]
+		base_transform = model_transform_dict[base_model]
+		apply_xml(ob, base_model, base_transform)
+
+
+		# LimitedRotatable
+		if base_name in ObjectLinksList:
+			ob.scrLimitedRotatable = True
+			ob.EntityObjectLinks = _linksaddr[idx]
+			ob.ObjectLinksName  = _linksName[_linksBaseName[idx]]
+			ob.packagePathHash  = str(_packagePathHash_[idx])
+			ob.maxRotDegreeLeft  = int(_maxRotDegreeLeft[idx])
+			ob.maxRotDegreeRight = int(_maxRotDegreeRight[idx])
+			ob.maxRotSpeedLeft   = int(_maxRotSpeedLeft[idx])
+			ob.maxRotSpeedRight  = int(_maxRotSpeedRight[idx])
+			idx += 1
+
+		for i in range(1, xml_count):
+
+			dup_name = f"{base_name}.{i:03}"
+			new_ob = duplicate_hierarchy(ob, dup_name)
+
+			model = xml_list[i]
+			transform = model_transform_dict[model]
+			apply_xml(new_ob, model, transform)
+
 	return 1
-
-def del_obj(context):
-
-	# In this case we delete last object duplicate, because we no need last object
-	for ob in bpy.data.objects[context.scene.part_info].children:
-		if ob.type == "EMPTY":
-			if '.' in ob.name:
-				_obname = str(ob.name).split('.')[0]
-				obLen=objlist.count(_obname)
-				if len(str(obLen)) == 1:
-					_obLen='.00%s'%obLen
-				elif len(str(obLen)) == 2:
-					_obLen='.0%s'%obLen
-				else:
-					_obLen='.%s'%obLen
-				if ob.name == _obname+_obLen:
-					print('Delete duplicate last object: "%s%s"'%(_obname,_obLen))
-					SelectableObj(ob)
-					bpy.ops.object.delete()
-
 
