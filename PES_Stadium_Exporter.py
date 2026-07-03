@@ -32,6 +32,19 @@
 #     Suat Cadgas/sxsxsx
 #     themex
 #     zlac
+#
+# v1.0.2 additions (papijonnnn):
+#     - probe and detail mesh part export support
+#     - field and cover FMDL export with correct FOX2 addresses (confirmed by gavi)
+#     - patchFieldToEnlighten: upgrades field entity to EnlightenStadiumModel in FOX2 XML
+#     - rain UV map export/import support (uv_rain, uv_map_ext) — 4-channel UV pipeline
+#     - rain UV gap-filling with correct uvEqualities for Konami-style stadiums (e.g. Camp Nou)
+#     - Wembley/Ibrox import fix: self-parenting guard in addMeshGroup (IO.py)
+#     - import loop now skips unsupported FMDLs instead of cancelling the whole import
+#     - probe/detail/cover/field parenting correctly under MAIN after import
+#     - Auto Parent Organizer updated to include probe/detail/field/cover parts
+#     - swap ID button fixed to preserve /Assets/ path casing (fix credited to bluestillidie00)
+#     - UV validation updated to allow up to 4 ordered channels
 # '''
 
 import bpy, os, bpy.utils.previews, bpy_extras, shutil, bmesh, re, math
@@ -43,9 +56,9 @@ from mathutils import Vector
 
 bl_info = {
 	"name": "PES Stadium Exporter",
-	"description": "eFootbal PES2021 PES Stadium Exporter",
+	"description": "eFootball PES2021 Stadium Exporter",
 	"author": "MjTs-140914 || the4chancup",
-	"version": (1, 0, 1),
+	"version": (1, 0, 2),
 	"blender": (5, 00, 0),
 	"location": "Under Scene Tab",
 	# "warning": "This addon is still in development.",
@@ -493,7 +506,7 @@ def remove_dds(dirPath):
 			if extension.lower() == '.dds' or extension.lower() == '.png' or extension.lower() == '.tga':
 				ddsPath = os.path.join(root, filename + extension)
 				os.remove(ddsPath)
-				print('Removing texture [>{0}{1}<] succesfully'.format(filename, extension))
+				print('Removing texture [>{0}{1}<] successfully'.format(filename, extension))
 	return 1
 
 def node_group():
@@ -540,35 +553,35 @@ def valid_key(context):
 		if child.type == 'EMPTY':
 
 			if child.scrName == "":
-				msg = "Object key is empty !!, more info see System Console (^_^)"
+				msg = "Object key is empty !!, more info see System Console "
 				print(f"Check out object: '{child.name}' key: can't be empty !!")
 				return False, msg
 
 			if child.scrEntityPtr == "":
-				msg = "Object key is empty !!, more info see System Console (^_^)"
+				msg = "Object key is empty !!, more info see System Console "
 				print(f"Check out object: '{child.name}' EntityPtr: can't be empty !!")
 				return False, msg
 
 			if child.scrTransformEntity == "":
-				msg = "Object key is empty !!, more info see System Console (^_^)"
+				msg = "Object key is empty !!, more info see System Console "
 				print(f"Check out object: '{child.name}' Transform: can't be empty !!")
 				return False, msg
 
 			if child.scrName in keyInfo:
-				msg = "Object same value already added !!, more info see System Console (^_^)"
+				msg = "Object same value already added !!, more info see System Console "
 				print(f"Check out object: '{child.name}' Name: '{child.scrName}' already added !! (Tips: don't use same key)")
 				return False, msg
 			keyInfo.append(child.scrName)
 
 			if child.scrEntityPtr in keyInfo:
-				msg = "Object same value already added !!, more info see System Console (^_^)"
+				msg = "Object same value already added !!, more info see System Console "
 				print(f"Check out object: '{child.name}' EntityPtr: '{child.scrEntityPtr}' already added !! (Tips: don't use same key)")
 				return False, msg
 			keyInfo.append(child.scrEntityPtr)
 
 			t = child.scrTransformEntity
 			if t in keyInfo:
-				msg = "Object same value already added !!, more info see System Console (^_^)"
+				msg = "Object same value already added !!, more info see System Console "
 				print(f"Check out object: '{child.name}' Transform: '{t}' already added !! (Tips: don't use same key)")
 				return False, msg
 			keyInfo.append(t)
@@ -582,7 +595,7 @@ def valid_key(context):
 	if duplicates:
 		for value, objects in duplicates.items():
 			print(f"Check out objects with same  key '{value}': {', '.join(objects)}")
-		msg = "Object same value already added !!, more info see System Console (^_^)"
+		msg = "Object same value already added !!, more info see System Console "
 		return False, msg
 
 	return True, msg
@@ -655,6 +668,14 @@ def Create_Parent_Part(self, context):
 			elif ob.name in datalist2:
 				ob.parent = bpy.data.objects["EXTRA"]	
 			elif ob.name in datalist:
+				ob.parent = bpy.data.objects["MAIN"]
+			elif ob.name in datalist_detail or ob.name.replace("MESH_","",1) in datalist_detail:
+				ob.parent = bpy.data.objects["MAIN"]
+			elif ob.name in datalist_probe or ob.name.replace("MESH_","",1) in datalist_probe:
+				ob.parent = bpy.data.objects["MAIN"]
+			elif ob.name in datalist_field or ob.name == "MESH_field":
+				ob.parent = bpy.data.objects["MAIN"]
+			elif ob.name in datalist_cover or ob.name == "MESH_cover":
 				ob.parent = bpy.data.objects["MAIN"]
 			if ob.name in parent_main_list:
 				for op in main_list:
@@ -1126,27 +1147,27 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 					row = box.row()
 					row.label(text="Stadium Import Menu", icon="INFO")
 					row = box.row()
-					row.operator(FDMDL_OT_Import_Ads_Stadium.bl_idname, text="Import Ads Stadium", icon="IMPORT")
+					row.operator(FDMDL_OT_Import_Ads_Stadium.bl_idname, text="Import Stadium Ads", icon="IMPORT")
 					row.operator("clear_temp.operator", text="", icon="TRASH").opname = "cleartemp"
 				if ob.name == "AUDIAREA":
 					row = layout.row()
 					box = layout.box()
 					row = box.row()
-					row.label(text="Audiarea Import Menu", icon="INFO")
+					row.label(text="Audiarea Import", icon="INFO")
 					row = box.row()
 					row.operator(FDMDL_OT_Import_Audiarea_Stadium.bl_idname, text="Import Stadium Audiarea", icon="IMPORT")
 				if ob.name == "LIGHTS":
 					row = layout.row()
 					box = layout.box()
 					row = box.row()
-					row.label(text="Light Effect Import Menu", icon="INFO")
+					row.label(text="Light Effect Import", icon="INFO")
 					row = box.row()
 					row.operator(FDMDL_OT_Import_Light_Effect_Stadium.bl_idname, text="Import Light Effect Stadium", icon="IMPORT")
 				if ob and ob.type == 'MESH' and ob is not None:
 					mat = bpy.data.objects[ob.name].material_slots
 					box = layout.box()
 					row = box.row()
-					row.label(text="Parent Assigment", icon="INFO")
+					row.label(text="Parent Assignment", icon="INFO")
 					row = box.row()
 					row.label(text="Vertex Count : " +str(len(ob.data.vertices)), icon="VERTEXSEL")
 					row.label(text="Face Count : " +str(len(ob.data.polygons)), icon="FACESEL")
@@ -1198,14 +1219,14 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 								row.label(text="Shadow Type : Custom", icon="TEXTURE_DATA")
 							row = box.row()
 					else:
-						box.label(text="No parent for active object, assign a parent...", icon="ERROR")
+						box.label(text="No parent assigned — please assign a parent first.", icon="ERROR")
 					if len(mat) == 0 and not ob.name in crowd_part and not ob.name in flags_part:
-						row.label(text="Mesh [%s] not have Materials!" % ob.name, icon="ERROR")
+						row.label(text="Mesh [%s] has no Materials!" % ob.name, icon="ERROR")
 					elif len(mat) == 1:
 						if blenderMaterial.fmdl_material_technique == str()	and not ob.name in crowd_part and not ob.name in flags_part:
-							row.label(text="Mesh [%s] not have Shader!" % ob.name, icon="ERROR")
+							row.label(text="Mesh [%s] has no Shader!" % ob.name, icon="ERROR")
 					elif len(mat) >= 2	and not ob.name in crowd_part and not ob.name in flags_part:
-						row.label(text="Mesh [%s] too much Material Slots" % ob.name, icon="ERROR")
+						row.label(text="Mesh [%s] has too many Material Slots" % ob.name, icon="ERROR")
 						
 				box = layout.box()
 
@@ -1269,7 +1290,7 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 						box = layout.box()
 						row = box.row()
 						if ob.name not in crowd_part and ob.parent and ob.parent.name == "MESH_CROWD":
-							box.label(text="Crowd Part Name is Wrong, Fix it before Export... ",icon="ERROR")
+							box.label(text="Crowd part name is incorrect — fix before exporting.",icon="ERROR")
 						else:
 							row.label(text="Crowd Export", icon="INFO")
 							row = box.row()
@@ -1282,7 +1303,7 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 						box = layout.box()
 						row = box.row()
 						if ob.name not in flags_part and ob.parent and ob.parent.name == "MESH_FLAGAREA":
-							box.label(text="Flagarea Part Name is Wrong, Fix it before Export... ",icon="ERROR")
+							box.label(text="Flagarea part name is incorrect — fix before exporting.",icon="ERROR")
 						else:
 							row.label(text="Flagarea Export", icon="INFO")
 							row = box.row()
@@ -1347,21 +1368,21 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 					else:
 						if str(ob.name).startswith("H_") and ob.type=='LIGHT' and bpy.data.lights[ob.data.name].type != 'AREA':
 							row = box.row()
-							row.label(text="Light object %s type isn't Area"%ob.name, icon="ERROR")
+							row.label(text="Light object %s type must be Area"%ob.name, icon="ERROR")
 							row = box.row()
 						elif str(ob.name).startswith("F_") and ob.type=='LIGHT' and bpy.data.lights[ob.data.name].type != 'AREA':
 							row = box.row()
-							row.label(text="Light object %s type isn't Area"%ob.name, icon="ERROR")
+							row.label(text="Light object %s type must be Area"%ob.name, icon="ERROR")
 							row = box.row()
 						elif str(ob.name).startswith("L_") and ob.type=='LIGHT' and bpy.data.lights[ob.data.name].type != 'POINT':
 							row = box.row()
-							row.label(text="Light object %s type isn't POINT"%ob.name, icon="ERROR")
+							row.label(text="Light object %s type must be Point"%ob.name, icon="ERROR")
 							row = box.row()
 						else:
 							row = box.row()
-							row.label(text="Light object %s name isn't correct"%ob.name, icon="ERROR")
+							row.label(text="Light object %s isn't correct"%ob.name, icon="ERROR")
 							row = box.row()
-							row.label(text="Light object name must startswith:", icon="ERROR")
+							row.label(text="Light object names must start with:", icon="ERROR")
 							row = box.row()
 							row.label(text="(L_) for LightBillboard -> Lights type (Point)", icon="ERROR")
 							row = box.row()
@@ -1377,7 +1398,7 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 					row.prop(scn,"tvobject",text="Type")
 					row.operator("tv_object.operator", text="Add %s"%context.scene.tvobject)
 					row = box.row()
-					row.operator("export_tv.operator", text="Export Stadium Tv", icon="EXPORT")
+					row.operator("export_tv.operator", text="Export Stadium TV", icon="EXPORT")
 					row = box.row()
 				elif scn.part_info == "PITCH2021" and ob is not None:
 					if ob.name == "PITCH2021":
@@ -1565,9 +1586,9 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 				elif scn.part_info == "AD" and ob is not None:
 					box = layout.box()
 					row = box.row()
-					row.label(text="Stadium AD Export", icon="INFO")
+					row.label(text="Export Stadium Ads", icon="INFO")
 					row = box.row()
-					row.operator("convert.operator", text="Export Ads Texture", icon="NODE_TEXTURE")
+					row.operator("convert.operator", text="Export Ad Textures", icon="NODE_TEXTURE")
 					if scn.useFastConvertTexture:
 						txt = "Skip Non-Modified textures"
 					else:
@@ -1644,7 +1665,7 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 					row.operator("wm.url_open", text='', icon_value=this_icon).url = 'https://www.paypal.com/paypalme/mjts140914'
 		else:
 			row = box.row()
-			row.label(text="Not support Blender version!", icon="ERROR")
+			row.label(text="Unsupported Blender version!", icon="ERROR")
 			row = box.row()
 
 def copytree(src, dst, symlinks=False, ignore=None):
@@ -1678,8 +1699,8 @@ class Stadium_Scarecrow(bpy.types.Operator):
 			Create_Parent_Part(self, context)
 			if len(stid) == 5:
 				if context.scene.export_path == str():
-					self.report({"WARNING"}, "Choose path to import %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-					print("Choose path to import %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+					self.report({"WARNING"}, "Choose path to import %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+					print("Choose path to import %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 					return {'CANCELLED'}
 
 				if not stid in context.scene.export_path:
@@ -1688,21 +1709,21 @@ class Stadium_Scarecrow(bpy.types.Operator):
 					return {'CANCELLED'}
 
 				if not context.scene.export_path.endswith(stid+"\\"):
-					self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-					print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+					self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+					print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 					return {'CANCELLED'}
 			else:
 				self.report({"WARNING"}, "Stadium ID isn't correct!!")
 				return {'CANCELLED'}
 			checks=checkStadiumID(context, True)
 			if checks:
-				self.report({"WARNING"}, "Stadium ID isn't match, more info see => System Console (^_^)")
+				self.report({"WARNING"}, "Stadium ID doesn't match, for more info see => System Console (^_^)")
 				return {'CANCELLED'}
 				
 			for ob in bpy.data.objects["SCARECROW"].children:
 				if ob.type == "EMPTY":
 					if "so_" in ob.name or "_sc2" in ob.name:
-						self.report({"WARNING"}, "Scarecrow already imported !!")
+						self.report({"WARNING"}, "Scarecrow already imported.")
 						return {'CANCELLED'}
 
 			fpkfilename="%sscarecrow\\#Win\\scarecrow_%s.fpk"%(exportPath,stid)
@@ -1728,7 +1749,7 @@ class Stadium_Scarecrow(bpy.types.Operator):
 
 			compileXML(fox2xmlName)
 			PesScarecrow.Settings(self,context,fox2xmlName+'.xml')
-			self.report({"INFO"}, "Importing scarecrow succesfully...")
+			self.report({"INFO"}, "Importing scarecrow successfully.")
 
 			remove_dir(fpkdir)
 			remove_file(Xmlfile)
@@ -1796,8 +1817,8 @@ class Stadium_Scarecrow(bpy.types.Operator):
 				makeXML(xmlPath, Asset, fpkname,"Fpk","FpkFile", True)
 			makeXML("%sscarecrow\\#Win\\scarecrow_%s.fpkd.xml"%(exportPath,stid),"/Assets/pes16/model/bg/%s/scarecrow/%s_pes2020_00.fox2"%(stid,stid), "scarecrow_%s.fpkd"%stid,"Fpk","FpkFile", False)
 			compileXML(fox2xmlName)
-			self.report({"INFO"}, "Exporting scarecrow succesfully...")
-			print("Exporting scarecrow succesfully...")
+			self.report({"INFO"}, "Exporting scarecrow successfully.")
+			print("Exporting scarecrow successfully.")
 			if not scn.scrGenerateFpkd:
 				pack_unpack_Fpk(Xmlfile)
 			pack_unpack_Fpk(Xmlfile2)
@@ -1827,8 +1848,8 @@ class Stadium_Banner(bpy.types.Operator):
 		dirPath=str()
 		if len(stid) == 5:
 			if context.scene.export_path == str():
-				self.report({"WARNING"}, "Choose path to import/export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-				print( "Choose path to import/export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+				self.report({"WARNING"}, "Choose path to import/export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+				print( "Choose path to import/export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 				return {'CANCELLED'}
 
 			if not stid in context.scene.export_path:
@@ -1837,20 +1858,20 @@ class Stadium_Banner(bpy.types.Operator):
 				return {'CANCELLED'}
 
 			if not context.scene.export_path.endswith(stid+"\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 		else:
-			self.report({"WARNING"}, "Stadium id isn't correct!!")
-			print("Stadium id isn't correct!!")
+			self.report({"WARNING"}, "Stadium ID isn't correct!!")
+			print("Stadium ID isn't correct!!")
 			return {'CANCELLED'}	
 		if self.opname == "import_cheer1":
 			node_group()
 			Create_Parent_Part(self,context)
 			for ob in bpy.data.objects:
 				if ob is not None and ob.type == "MESH" and "_h_a1_" in ob.name:
-					self.report({"WARNING"}, "Banner already imported !!")
-					print("Banner already imported !!")
+					self.report({"WARNING"}, "Banner already imported.")
+					print("Banner already imported.")
 					return {'CANCELLED'}
 			fpkfilename="%scheer\\#Win\\cheer_%s_h_a1.fpk" % (exportPath,stid)
 			dirRemove="%scheer\\#Win\\cheer_%s_h_a1_fpk"% (exportPath,stid)
@@ -1879,7 +1900,7 @@ class Stadium_Banner(bpy.types.Operator):
 							fmdlPath = os.path.join(root, fileName)
 							importFmdlfile(fmdlPath, "Skeleton_%s" % filename, filename, filename, dirPath, "CHEER1")
 							print('Importing ==> %s' % fileName)
-				self.report({"INFO"}, "Import banner succesfully...")
+				self.report({"INFO"}, "Import banner successfully.")
 				remove_dir(dirRemove)
 				remove_file(fileRemove)
 		if self.opname == "import_cheer2":
@@ -1887,8 +1908,8 @@ class Stadium_Banner(bpy.types.Operator):
 			Create_Parent_Part(self,context)
 			for ob in bpy.data.objects:
 				if ob is not None and ob.type == "MESH" and "_h_a2_" in ob.name:
-					self.report({"WARNING"}, "Banner already imported !!")
-					print("Banner already imported !!")
+					self.report({"WARNING"}, "Banner already imported.")
+					print("Banner already imported.")
 					return {'CANCELLED'}
 			fpkfilename="%scheer\\#Win\\cheer_%s_h_a2.fpk" % (exportPath,stid)
 			dirRemove="%scheer\\#Win\\cheer_%s_h_a2_fpk"% (exportPath,stid)
@@ -1917,7 +1938,7 @@ class Stadium_Banner(bpy.types.Operator):
 							fmdlPath = os.path.join(root, fileName)
 							importFmdlfile(fmdlPath, "Skeleton_%s" % filename, filename, filename, dirPath, "CHEER2")
 							print('Importing ==> %s' % fileName)
-				self.report({"INFO"}, "Import banner succesfully...")
+				self.report({"INFO"}, "Import banner successfully.")
 				remove_dir(dirRemove)
 				remove_file(fileRemove)
 		if self.opname == "export_cheer1":
@@ -1929,8 +1950,8 @@ class Stadium_Banner(bpy.types.Operator):
 								if ob2 is not None and  ob2.type == "MESH":
 									blenderMaterial = bpy.data.objects[ob2.name].active_material
 									if blenderMaterial.name != "banner_shader" and blenderMaterial.name != "banner_shader2":
-										self.report({"WARNING"}, "Object %s material name isn't correct!"%ob2.name)
-										print("Object %s material name isn't correct!"%ob2.name)
+										self.report({"WARNING"}, "Object %s material isn't correct!"%ob2.name)
+										print("Object %s material isn't correct!"%ob2.name)
 										return {'CANCELLED'}
 			c1,c2 = len(bpy.data.objects["MESH_cheer_back1_h_a1"].children), len(bpy.data.objects["MESH_cheer_front1_h_a1"].children)
 			c3,c4 = len(bpy.data.objects["MESH_cheer_left1_h_a1"].children), len(bpy.data.objects["MESH_cheer_right1_h_a1"].children)
@@ -1986,7 +2007,7 @@ class Stadium_Banner(bpy.types.Operator):
 			pack_unpack_Fpk(xmldPath)
 			remove_dir(dirdRemove)
 			remove_file(filedRemove)
-			self.report({"INFO"}, "Export banner succesfully...")
+			self.report({"INFO"}, "Export banner successfully.")
 		if self.opname == "export_cheer2":
 			for child in bpy.data.objects[context.scene.part_info].children:
 				if child.type == 'EMPTY' and child is not None:
@@ -1996,8 +2017,8 @@ class Stadium_Banner(bpy.types.Operator):
 								if ob2 is not None and  ob2.type == "MESH":
 									blenderMaterial = bpy.data.objects[ob2.name].active_material
 									if blenderMaterial.name != "banner_shader" and blenderMaterial.name != "banner_shader2":
-										self.report({"WARNING"}, "Object %s material name isn't correct!"%ob2.name)
-										print("Object %s material name isn't correct!"%ob2.name)
+										self.report({"WARNING"}, "Object %s material isn't correct!"%ob2.name)
+										print("Object %s material isn't correct!"%ob2.name)
 										return {'CANCELLED'}
 			c1,c2 = len(bpy.data.objects["MESH_cheer_back1_h_a2"].children), len(bpy.data.objects["MESH_cheer_front1_h_a2"].children)
 			c3,c4 = len(bpy.data.objects["MESH_cheer_left1_h_a2"].children), len(bpy.data.objects["MESH_cheer_right1_h_a2"].children)
@@ -2053,7 +2074,7 @@ class Stadium_Banner(bpy.types.Operator):
 			pack_unpack_Fpk(xmldPath)
 			remove_dir(dirdRemove)
 			remove_file(filedRemove)
-			self.report({"INFO"}, "Export banner succesfully...")
+			self.report({"INFO"}, "Export banner successfully.")
 		return {'FINISHED'}
 	pass
 
@@ -2074,8 +2095,8 @@ class Staff_Coach_Pos(bpy.types.Operator):
 			Create_Parent_Part(self, context)
 		if len(stid) == 5:
 			if context.scene.export_path == str():
-				self.report({"WARNING"}, "Choose path to load/assign %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-				print("Choose path to load/assign %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+				self.report({"WARNING"}, "Choose path to load/assign %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+				print("Choose path to load/assign %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 				return {'CANCELLED'}
 
 			if not stid in context.scene.export_path:
@@ -2084,8 +2105,8 @@ class Staff_Coach_Pos(bpy.types.Operator):
 				return {'CANCELLED'}
 
 			if not context.scene.export_path.endswith(stid+"\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 			
 	
@@ -2115,9 +2136,9 @@ class Staff_Coach_Pos(bpy.types.Operator):
 								ob.location.y = 37.2800179*-1
 							if ob.name in ['coach_home', 'coach_away']:
 								ob.parent = bpy.data.objects['Staff Coach']
-					self.report({"INFO"}, "Coach loaded succesfully...")
+					self.report({"INFO"}, "Coach loaded successfully.")
 				else:
-					self.report({"WARNING"}, "Coach already loaded !!")
+					self.report({"WARNING"}, "Coach already loaded.")
 			return {'FINISHED'}
 		if self.opname == "assigncoach":
 			
@@ -2152,7 +2173,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 			pack_unpack_Fpk("{0}staff\\#Win\\staff_{1}.fpkd.xml".format(scn.export_path,stid))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpkd".format(scn.export_path,stid))
 			remove_file("{0}staff\\#Win\\staff_{1}.fpkd.xml".format(scn.export_path,stid))
-			self.report({"INFO"}, "Coach assign succesfully...")
+			self.report({"INFO"}, "Coach assign successfully.")
 			return {'FINISHED'}
 	# Staff Walk
 		if self.opname == "loadwalk":
@@ -2164,7 +2185,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 								self.report({"WARNING"}, "Staff Walk already loaded !!")
 								return {'CANCELLED'}
 
-			self.report({"INFO"}, "Load Staff Walk succesfully...")
+			self.report({"INFO"}, "Load Staff Walk successfully.")
 			PesStaff.importStaffWalk(self, context)
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpk".format(scn.export_path,stid))
 			remove_file("{0}staff\\#Win\\staff_{1}.fpk.xml".format(scn.export_path,stid))
@@ -2180,7 +2201,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 				return {'CANCELLED'}
 			pack_unpack_Fpk("{0}staff\\#Win\\staff_{1}.fpkd".format(scn.export_path,stid))
 			PesStaff.exportStaffWalk(self, context)
-			self.report({"INFO"}, "Assign Staff Walk succesfully...")
+			self.report({"INFO"}, "Assign Staff Walk successfully.")
 			xmlPath="{0}staff\\#Win\\staff_{1}_fpkd\\Assets\\pes16\\model\\bg\\{2}\\staff\\{3}_2018_common_walk.fox2.xml".format(scn.export_path,stid,stid,stid)
 			compileXML(xmlPath)
 			pack_unpack_Fpk("{0}staff\\#Win\\staff_{1}.fpkd.xml".format(scn.export_path,stid))
@@ -2192,7 +2213,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 		if self.opname == "loadballboy":
 			try:
 				PesStaff.importBallboy(self, context)
-				self.report({"INFO"}, "Load Ballboy succesfully...")
+				self.report({"INFO"}, "Load Ballboy successfully.")
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpk".format(scn.export_path,stid))
@@ -2209,7 +2230,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 				return {'CANCELLED'}
 			try:
 				PesStaff.Ballboy_Assign(self,context)
-				self.report({"INFO"}, "Assign Ballboy succesfully...")
+				self.report({"INFO"}, "Assign Ballboy successfully.")
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpkd".format(scn.export_path,stid))
@@ -2219,7 +2240,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 		if self.opname == "loadcamcrew":
 			try:
 				PesStaff.importCamCrew(self, context)
-				self.report({"INFO"}, "Load Cam Crew succesfully...")
+				self.report({"INFO"}, "Load Cam Crew successfully.")
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpk".format(scn.export_path,stid))
@@ -2238,7 +2259,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 			pack_unpack_Fpk("{0}staff\\#Win\\staff_{1}.fpkd".format(scn.export_path,stid))
 			try:
 				PesStaff.CamCrew_Assign(self,context)
-				self.report({"INFO"}, "Assign Cam Crew succesfully...")
+				self.report({"INFO"}, "Assign Cam Crew successfully.")
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpkd".format(scn.export_path,stid))
@@ -2248,7 +2269,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 		if self.opname == "loadSteward":
 			try:
 				PesStaff.importSteward(self, context)
-				self.report({"INFO"}, "Load Steward succesfully...")
+				self.report({"INFO"}, "Load Steward successfully.")
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpk".format(scn.export_path,stid))
@@ -2267,7 +2288,7 @@ class Staff_Coach_Pos(bpy.types.Operator):
 			pack_unpack_Fpk("{0}staff\\#Win\\staff_{1}.fpkd".format(scn.export_path,stid))
 			try:
 				PesStaff.Steward_Assign(self,context)
-				self.report({"INFO"}, "Assign Steward succesfully...")
+				self.report({"INFO"}, "Assign Steward successfully.")
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 			remove_dir("{0}staff\\#Win\\staff_{1}_fpkd".format(scn.export_path,stid))
@@ -2395,8 +2416,8 @@ class Refresh_Light_Side(bpy.types.Operator):
 	def execute(self, context):
 		side_refresh = r_side(context)
 		if side_refresh:
-			self.report( {"WARNING"}, "Light object name isn't correct!,more info see System Console (^_^)")
-			print("\nLight object name must startswith: \n(L_) for LightBillboard -> object type (Point). \n(H_) for Halo -> object type (Area). \n(F_) for LensFlare -> object type (Area).")
+			self.report( {"WARNING"}, "Light object isn't correct!,more info see System Console ")
+			print("\nLight object names must start with: \n(L_) for LightBillboard -> object type (Point). \n(H_) for Halo -> object type (Area). \n(F_) for LensFlare -> object type (Area).")
 			return {'CANCELLED'}
 		return {'FINISHED'}
 	pass
@@ -2418,8 +2439,8 @@ class Light_FX(bpy.types.Operator):
 		if self.opname == "set_lfx_side":
 			side_refresh = r_side(context)
 			if side_refresh:
-				self.report( {"WARNING"}, "Light object name isn't correct!,more info see System Console (^_^)")
-				print("\nLight object name must startswith: \n(L_) for LightBillboard -> object type (Point). \n(H_) for Halo -> object type (Area). \n(F_) for LensFlare -> object type (Area).")
+				self.report( {"WARNING"}, "Light object isn't correct!,more info see System Console ")
+				print("\nLight object names must start with: \n(L_) for LightBillboard -> object type (Point). \n(H_) for Halo -> object type (Area). \n(F_) for LensFlare -> object type (Area).")
 				return {'CANCELLED'}
 			try:
 				for l_ob in bpy.context.selected_objects:
@@ -2439,8 +2460,8 @@ class Light_FX(bpy.types.Operator):
 			
 			if len(stid) == 5:
 				if context.scene.export_path == str():
-					self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-					print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+					self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+					print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 					return {'CANCELLED'}
 
 				if not stid in context.scene.export_path:
@@ -2449,8 +2470,8 @@ class Light_FX(bpy.types.Operator):
 					return {'CANCELLED'}
 
 				if not context.scene.export_path.endswith(stid+"\\"):
-					self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-					print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+					self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+					print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 					return {'CANCELLED'}
 
 				l1,l2 = len(bpy.data.objects["L_BACK"].children), len(bpy.data.objects["L_FRONT"].children)
@@ -2473,12 +2494,12 @@ class Light_FX(bpy.types.Operator):
 							if ob.type == "LIGHT":
 								ol = bpy.data.lights[ob.data.name]
 								if ol.type != "POINT":
-									self.report({"WARNING"}, "Object %s type isn't POINT!"%ob.name)
-									print("Object %s type isn't POINT!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
+									self.report({"WARNING"}, "Object %s type must be Point!"%ob.name)
+									print("Object %s type must be Point!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
 									return {'CANCELLED'}
 								if ol.type == "POINT" and not "L_" in ob.name:
-									self.report({"WARNING"}, "Object (%s) name isn't correct!"%ob.name)
-									print("Object (%s) name isn't correct!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
+									self.report({"WARNING"}, "Object (%s) isn't correct!"%ob.name)
+									print("Object (%s) isn't correct!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
 									return {'CANCELLED'}
 				for child in bpy.data.objects["LensFlare"].children:
 					if child.type == "EMPTY":
@@ -2486,12 +2507,12 @@ class Light_FX(bpy.types.Operator):
 							if ob.type == "LIGHT":
 								ol = bpy.data.lights[ob.data.name]
 								if ol.type != "AREA":
-									self.report({"WARNING"}, "Object %s type isn't AREA!"%ob.name)
-									print("Object %s type isn't AREA!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
+									self.report({"WARNING"}, "Object %s type must be Area!"%ob.name)
+									print("Object %s type must be Area!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
 									return {'CANCELLED'}
 								if ol.type == "AREA" and not "F_" in ob.name:
-									self.report({"WARNING"}, "Object (%s) name isn't correct!"%ob.name)
-									print("Object (%s) name isn't correct!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
+									self.report({"WARNING"}, "Object (%s) isn't correct!"%ob.name)
+									print("Object (%s) isn't correct!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
 									return {'CANCELLED'}
 				for child in bpy.data.objects["Halo"].children:
 					if child.type == "EMPTY":
@@ -2499,12 +2520,12 @@ class Light_FX(bpy.types.Operator):
 							if ob.type == "LIGHT":
 								ol = bpy.data.lights[ob.data.name]
 								if ol.type != "AREA":
-									self.report({"WARNING"}, "Object %s type isn't AREA!"%ob.name)
-									print("Object %s type isn't AREA!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
+									self.report({"WARNING"}, "Object %s type must be Area!"%ob.name)
+									print("Object %s type must be Area!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
 									return {'CANCELLED'}
 								if ol.type == "AREA" and not "H_" in ob.name:
-									self.report({"WARNING"}, "Object (%s) name isn't correct!"%ob.name)
-									print("Object (%s) name isn't correct!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
+									self.report({"WARNING"}, "Object (%s) isn't correct!"%ob.name)
+									print("Object (%s) isn't correct!, Checkout object in %s -> %s -> %s"%(ob.name,child.parent.name,ob.parent.name, ob.name))
 									return {'CANCELLED'}
 				
 				makedir("effect\\#Win\\effect_{0}_{1}_fpk\\Assets\\pes16\\model\\bg\\{2}\\effect\\locator".format(scn.STID,scn.time_mode,scn.STID), True)
@@ -2614,7 +2635,7 @@ class Refresh_OT(bpy.types.Operator):
 						self.droplist = "MESH_"+p_ob.parent.name
 				except:
 					pass
-		self.report({"INFO"}, "Refresh parent succesfully!")
+		self.report({"INFO"}, "Refresh parent successfully!")
 		return {'FINISHED'}
 	pass
 
@@ -2728,11 +2749,11 @@ class FDMDL_OT_Import_Main_Stadium(bpy.types.Operator, bpy_extras.io_utils.Impor
 							print("Skipping %s — %s" % (fileName, format(e)))
 			remove_dir("%s\\%s_fpk"%(fpkdir,stid))
 			remove_file("%s\\%s.fpk.xml"%(fpkdir,stid))
-			print('Importing stadium succesfully...!')
-			self.report({"INFO"}, "Importing main stadium succesfully...!")
+			print('Importing stadium successfully!')
+			self.report({"INFO"}, "Importing main stadium successfully!")
 		except Exception as e:
 			self.report({"WARNING"}, format(e))
-			print("Error: FMDL format doesn't support !!,", format(e))
+			print("FMDL import error:", format(e))
 			return {'CANCELLED'}
 		return {'FINISHED'}
 
@@ -2810,11 +2831,11 @@ class FDMDL_OT_Import_Extra_Stadium(bpy.types.Operator, bpy_extras.io_utils.Impo
 			remove_file("%s\\%s_dr.fpk.xml"%(fpkdir,stid))
 			remove_file("%s\\%s_nf.fpk.xml"%(fpkdir,stid))
 			remove_file("%s\\%s_nr.fpk.xml"%(fpkdir,stid))
-			print('Importing stadium succesfully...!')
-			self.report({"INFO"}, "Importing extra stadium succesfully...!")
+			print('Importing stadium successfully!')
+			self.report({"INFO"}, "Importing extra stadium successfully!")
 		except Exception as e:
-			self.report({"WARNING"}, "Error: FMDL format doesn't support !!")
-			print("Error: FMDL format doesn't support !!,", format(e))
+			self.report({"WARNING"}, "FMDL import error")
+			print("FMDL import error:", format(e))
 			return {'CANCELLED'}
 		return {'FINISHED'}
 	
@@ -2833,9 +2854,9 @@ def get_ads_parent(fn_lower):
 	return None
 
 class FDMDL_OT_Import_Ads_Stadium(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
-	"""Import Ads Stadium"""
+	"""Import Ads"""
 	bl_idname = "importads.operator"
-	bl_label = "Import Ads Stadium"
+	bl_label = "Import Ads"
 	
 	import_label = "PES FMDL (.fpk)"
 	
@@ -2929,11 +2950,11 @@ class FDMDL_OT_Import_Ads_Stadium(bpy.types.Operator, bpy_extras.io_utils.Import
 			remove_file(f"{fpkdir}\\ad_{stid}_normal.fpk.xml")
 			remove_file(f"{fpkdir}\\ad_{stid}_olcZ.fpk.xml")
 			remove_file(f"{fpkdir}\\ad_{stid}_sc.fpk.xml")
-			print('Importing ads succesfully...!')
-			self.report({"INFO"}, "Importing ads stadium succesfully...!")
+			print('Importing ads successfully!')
+			self.report({"INFO"}, "Importing ads stadium successfully!")
 		except Exception as e:
-			self.report({"WARNING"}, "Error: FMDL format doesn't support !!")
-			print("Error: FMDL format doesn't support !!,", format(e))
+			self.report({"WARNING"}, "FMDL import error")
+			print("FMDL import error:", format(e))
 			return {'CANCELLED'}
 		return {'FINISHED'}
 
@@ -3392,15 +3413,15 @@ class Crowd_OT(bpy.types.Operator):
 		if len(bpy.data.objects['MESH_CROWD'].children) > 0:
 			for ob in  bpy.data.objects['MESH_CROWD'].children:
 				if ob.name not in crowd_part:
-					self.report( {"WARNING"}, "%s Crowd Part Name is Wrong, Fix it before Export... "%ob.name)
+					self.report( {"WARNING"}, "%s Crowd part name is incorrect — fix before exporting."%ob.name)
 					return {'CANCELLED'}
 				if "C_" not in ob.name:
-					self.report( {"WARNING"}, "Mesh [%s] name isn't correct!!" %ob.name)
+					self.report( {"WARNING"}, "Mesh [%s] isn't correct!!" %ob.name)
 					return {'CANCELLED'}
 			if len(stid) == 5:
 				if context.scene.export_path == str():
-					self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-					print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+					self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+					print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 					return {'CANCELLED'}
 
 				if not stid in context.scene.export_path:
@@ -3409,8 +3430,8 @@ class Crowd_OT(bpy.types.Operator):
 					return {'CANCELLED'}
 
 				if not context.scene.export_path.endswith(stid+"\\"):
-					self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-					print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+					self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+					print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 					return {'CANCELLED'}
 			else:
 				self.report({"WARNING"}, "Stadium ID isn't correct!!")
@@ -3435,10 +3456,10 @@ class Crowd_OT(bpy.types.Operator):
 				pack_unpack_Fpk(dir_to_remove[:-4]+".fpkd.xml")
 				remove_dir(dir_to_remove+"d")
 				remove_file(dir_to_remove[:-4]+".fpkd.xml")
-				self.report({"INFO"}, "Exporting Crowd succesfully...!")
-				print("\nExporting Crowd succesfully...!")
+				self.report({"INFO"}, "Exporting Crowd successfully!")
+				print("\nExporting Crowd successfully!")
 			except Exception as exception:
-				self.report({"WARNING"}, format(exception) + " more info see => System Console (^_^)")
+				self.report({"WARNING"}, format(exception) + " more info see => System Console ")
 				print(format(type(exception).__name__), format(exception))
 				if "index 0 out of range" in format(exception):
 					print("\nInfo: Check out mesh have associate Behavior Crowd?, make sure vertex weight is fine, to check weight Go To Weight Paint mode")
@@ -3464,15 +3485,15 @@ class Flags_Area_OT(bpy.types.Operator):
 		if len(bpy.data.objects['MESH_FLAGAREA'].children) > 0:
 			for ob in  bpy.data.objects['MESH_FLAGAREA'].children:
 				if ob.name not in flags_part:
-					self.report( {"WARNING"}, "%s Flagarea Part Name is Wrong, Fix it before Export... "%ob.name)
+					self.report( {"WARNING"}, "%s Flagarea part name is incorrect — fix before exporting."%ob.name)
 					return {'CANCELLED'}
 				if "F_" not in ob.name:
-					self.report( {"WARNING"}, "Mesh [%s] flag area name isn't correct!!" %ob.name)
+					self.report( {"WARNING"}, "Mesh [%s] flag area isn't correct!!" %ob.name)
 					return {'CANCELLED'}
 			if len(stid) == 5:
 				if context.scene.export_path == str():
-					self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-					print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+					self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+					print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 					return {'CANCELLED'}
 
 				if not stid in context.scene.export_path:
@@ -3481,8 +3502,8 @@ class Flags_Area_OT(bpy.types.Operator):
 					return {'CANCELLED'}
 
 				if not context.scene.export_path.endswith(stid+"\\"):
-					self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-					print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+					self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+					print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 					return {'CANCELLED'}
 			else:
 				self.report({"WARNING"}, "Stadium ID isn't correct!!")
@@ -3507,8 +3528,8 @@ class Flags_Area_OT(bpy.types.Operator):
 				pack_unpack_Fpk(dir_to_remove[:-4]+".fpkd.xml")
 				remove_dir(dir_to_remove+"d")
 				remove_file(dir_to_remove[:-4]+".fpkd.xml")
-				self.report({"INFO"}, "Exporting Flagarea succesfully...!")
-				print("\nExporting Flagarea succesfully...!")
+				self.report({"INFO"}, "Exporting Flagarea successfully!")
+				print("\nExporting Flagarea successfully!")
 			except Exception as exception:
 				self.report({"WARNING"}, format(exception))
 				print(format(type(exception).__name__), format(exception))
@@ -3821,7 +3842,7 @@ class FDMDL_OT_Import_Light_Effect_Stadium(bpy.types.Operator, bpy_extras.io_uti
 			effect_config(config_xml)
 		except Exception as msg:
 			pass
-		self.report({"INFO"}, "Importing Light-FX succesfully...")
+		self.report({"INFO"}, "Importing Light-FX successfully.")
 		if bpy.ops.object.mode_set():
 			bpy.ops.object.mode_set(mode='OBJECT')
 		bpy.ops.object.select_all(action='DESELECT')
@@ -3850,13 +3871,27 @@ def checkMeshMaterialUvs(self, context):
 								print(f"Check in {context.scene.part_info}-->{child.name}-->{ob.name}-->{ob2.name}!")
 								return True
 							else:
-								expected_names = FMDL_UV_LAYER_NAMES[:len(uv)]
-								for i, expected in enumerate(expected_names):
-									if uv[i].name != expected:
-										self.report({"WARNING"}, "Mesh [%s] UV channel %d name isn't correct! Expected: %s" % (ob2.name, i, expected))
-										print("Mesh [%s] UV channel %d name isn't correct! Expected: %s" % (ob2.name, i, expected))
+								uv_names = [layer.name for layer in uv]
+								# Check all UV names are valid and in correct relative order
+								last_idx = -1
+								valid = True
+								for uv_name in uv_names:
+									if uv_name not in FMDL_UV_LAYER_NAMES:
+										self.report({"WARNING"}, "Mesh [%s] has unknown UV map name: %s. Expected one of: %s" % (ob2.name, uv_name, FMDL_UV_LAYER_NAMES))
+										print("Mesh [%s] has unknown UV map name: %s" % (ob2.name, uv_name))
 										print(f"Check in {context.scene.part_info}-->{child.name}-->{ob.name}-->{ob2.name}!")
-										return True
+										valid = False
+										break
+									idx = FMDL_UV_LAYER_NAMES.index(uv_name)
+									if idx <= last_idx:
+										self.report({"WARNING"}, "Mesh [%s] UV maps are not in correct order! Expected order: %s" % (ob2.name, FMDL_UV_LAYER_NAMES))
+										print("Mesh [%s] UV maps are not in correct order!" % ob2.name)
+										print(f"Check in {context.scene.part_info}-->{child.name}-->{ob.name}-->{ob2.name}!")
+										valid = False
+										break
+									last_idx = idx
+								if not valid:
+									return True
 							if len(mat) == 0:
 								self.report({"WARNING"}, "Mesh [%s] does not have an associated material!" % ob2.name)
 								print(f"Mesh {ob2.name} does not have an associated material!")
@@ -3897,8 +3932,8 @@ class Export_OT(bpy.types.Operator):
 
 		if len(stid) == 5:
 			if context.scene.export_path == str():
-				self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-				print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+				self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+				print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 				return {'CANCELLED'}
 
 			if not stid in context.scene.export_path:
@@ -3907,19 +3942,19 @@ class Export_OT(bpy.types.Operator):
 				return {'CANCELLED'}
 
 			if not context.scene.export_path.endswith(stid+"\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 		else:
 			self.report({"WARNING"}, "Stadium ID isn't correct!!")
 			return {'CANCELLED'}
 		checks=checkStadiumID(context, True)
 		if checks:
-			self.report({"WARNING"}, "Stadium ID isn't match, more info see => System Console (^_^)")
+			self.report({"WARNING"}, "Stadium ID doesn't match, for more info see => System Console (^_^)")
 			return {'CANCELLED'}
 		checksscale=checkNegativeScale(self,context)
 		if checksscale:
-			self.report({"WARNING"}, "Negative scale is unsupported, more info see => System Console (^_^)")
+			self.report({"WARNING"}, "Negative scale is unsupported, more info see => System Console ")
 			return {'CANCELLED'}
 		if self.opname == "mainstadium":
 			enable_enlighten = context.scene.fmdl_export_enlighten
@@ -3997,7 +4032,7 @@ class Export_OT(bpy.types.Operator):
 										else:
 											raise ValueError(fmdlName)
 									except Exception as msg:
-										self.report({"WARNING"}, format(msg) + " more info see => System Console (^_^)")
+										self.report({"WARNING"}, format(msg) + " more info see => System Console ")
 										print("\n\nInfo: Need to delete "+format(msg))
 										print("\n\nInfo: Make sure mesh object in correct parent set your mesh object to parent list: %s" % datalist)
 										return {'CANCELLED'}
@@ -4037,7 +4072,7 @@ class Export_OT(bpy.types.Operator):
 			pack_unpack_Fpk("{0}#Win\\{1}.fpkd.xml".format(exportPath,stid))
 			remove_dir("{0}#Win\\{1}_fpkd".format(exportPath,stid))
 			remove_file("{0}#Win\\{1}.fpkd.xml".format(exportPath,stid))
-			self.report({"INFO"}, f"Exporting main stadium {'with' if enable_enlighten else 'without'} enlighten succesfully...!")
+			self.report({"INFO"}, f"Exporting main stadium {'with' if enable_enlighten else 'without'} enlighten successfully!")
 			return {'FINISHED'}
 		if self.opname == "extrastadium":
 			print('\nStarting export object as .FMDL')
@@ -4075,7 +4110,7 @@ class Export_OT(bpy.types.Operator):
 												Stadium_Kinds.append(StadiumKind2[datalist2.index(fmdlName)])
 												Stadium_Dir.append(StadiumDir2[datalist2.index(fmdlName)])
 											except Exception as msg:
-												self.report({"WARNING"}, format(msg) + " more info see => System Console (^_^)")
+												self.report({"WARNING"}, format(msg) + " more info see => System Console ")
 												print("\n\nInfo: Need to delete "+format(msg))
 												print("\n\nInfo: Make sure mesh object in correct parent set your mesh object to parent list: %s" % datalist)
 												return {'CANCELLED'}
@@ -4107,7 +4142,7 @@ class Export_OT(bpy.types.Operator):
 					remove_dir(f"{exportPath}#Win\\{stid}_{timemode}_fpkd")
 					remove_file(f"{exportPath}#Win\\{stid}_{timemode}.fpkd.xml")
 									
-			self.report({"INFO"}, "Exporting extra stadium succesfully...!")
+			self.report({"INFO"}, "Exporting extra stadium successfully!")
 			return {'FINISHED'}
 	pass
 
@@ -4130,8 +4165,8 @@ class Pitch_Objects(bpy.types.Operator):
 
 		if len(stid) == 5:
 			if context.scene.export_path == str():
-				self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-				print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+				self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+				print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 				return {'CANCELLED'}
 
 			if not stid in context.scene.export_path:
@@ -4140,8 +4175,8 @@ class Pitch_Objects(bpy.types.Operator):
 				return {'CANCELLED'}
 
 			if not context.scene.export_path.endswith(stid+"\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 		else:
 			self.report({"WARNING"}, "Stadium ID isn't correct!!")
@@ -4171,12 +4206,12 @@ class Pitch_Objects(bpy.types.Operator):
 			except Exception as e:
 				self.report({"WARNING"}, format(e))
 				return {'CANCELLED'}
-			self.report({"INFO"}, "Load Pitch succesfully...!")
+			self.report({"INFO"}, "Load Pitch successfully!")
 			return {'FINISHED'}
 		if self.opname == "pitch_export":
 			checks=checkStadiumID(context, True)
 			if checks:
-				self.report({"WARNING"}, "Stadium ID isn't match, more info see => System Console (^_^)")
+				self.report({"WARNING"}, "Stadium ID doesn't match, for more info see => System Console (^_^)")
 				return {'CANCELLED'}
 			assetDirname = "/Assets/pes16/model/bg/{0}/scenes/pitch_{1}.fmdl".format(stid,stid)
 			assetDir = "{0}pitch\\#Win\\pitch_{1}_fpk\\Assets\\pes16\\model\\bg\\{2}\\scenes\\".format(exportPath,stid,stid)
@@ -4212,7 +4247,7 @@ class Pitch_Objects(bpy.types.Operator):
 			pack_unpack_Fpk("{0}pitch\\#Win\\pitch_{1}.fpkd.xml".format(exportPath,stid))
 			remove_dir("{0}pitch\\#Win\\pitch_{1}_fpkd".format(exportPath,stid))
 			remove_file("{0}pitch\\#Win\\pitch_{1}.fpkd.xml".format(exportPath,stid))
-			self.report({"INFO"}, "Exporting Pitch succesfully...!")
+			self.report({"INFO"}, "Exporting Pitch successfully!")
 			return {'FINISHED'}
 	pass
 
@@ -4235,8 +4270,8 @@ class ExportStadium_AD(bpy.types.Operator):
 
 		if len(stid) == 5:
 			if context.scene.export_path == str():
-				self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-				print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+				self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+				print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 				return {'CANCELLED'}
 
 			if not stid in context.scene.export_path:
@@ -4245,15 +4280,15 @@ class ExportStadium_AD(bpy.types.Operator):
 				return {'CANCELLED'}
 
 			if not context.scene.export_path.endswith(stid+"\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 		else:
 			self.report({"WARNING"}, "Stadium ID isn't correct!!")
 			return {'CANCELLED'}
 		checks=checkStadiumID(context, True)
 		if checks:
-			self.report({"WARNING"}, "Stadium ID isn't match, more info see => System Console (^_^)")
+			self.report({"WARNING"}, "Stadium ID doesn't match, for more info see => System Console (^_^)")
 			return {'CANCELLED'}
 	
 		for child in bpy.data.objects[context.scene.part_info].children:
@@ -4302,7 +4337,7 @@ class ExportStadium_AD(bpy.types.Operator):
 								pack_unpack_Fpk("{0}common\\ad\\#Win\\ad_{1}_{2}.fpkd.xml".format(exportPath[:-6], stid,adType))
 								remove_dir("{0}common\\ad\\#Win\\ad_{1}_{2}_fpkd".format(exportPath[:-6], stid,adType))
 								remove_file("{0}common\\ad\\#Win\\ad_{1}_{2}.fpkd.xml".format(exportPath[:-6], stid,adType))
-		self.report({"INFO"}, "Exporting Stadium Ads succesfully...!")
+		self.report({"INFO"}, "Exporting Stadium Ads successfully!")
 		return {'FINISHED'}
 
 class Export_TV(bpy.types.Operator):
@@ -4321,8 +4356,8 @@ class Export_TV(bpy.types.Operator):
 
 		if len(stid) == 5:
 			if context.scene.export_path == str():
-				self.report({"WARNING"}, "Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
-				print("Choose path to export %s e:g [-->Asset\\model\\bg\\%s<--]!!" % (context.scene.part_info,stid))
+				self.report({"WARNING"}, "Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
+				print("Choose path to export %s e.g. [...]\\Asset\\model\\bg\\%s[...]" % (context.scene.part_info,stid))
 				return {'CANCELLED'}
 
 			if not stid in context.scene.export_path:
@@ -4331,15 +4366,15 @@ class Export_TV(bpy.types.Operator):
 				return {'CANCELLED'}
 
 			if not context.scene.export_path.endswith(stid+"\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 		else:
 			self.report({"WARNING"}, "Stadium ID isn't correct!!")
 			return {'CANCELLED'}
 		checks=checkStadiumID(context, False)
 		if checks:
-			self.report({"WARNING"}, "Stadium ID isn't match, more info see => System Console (^_^)")
+			self.report({"WARNING"}, "Stadium ID doesn't match, for more info see => System Console (^_^)")
 			return {'CANCELLED'}
 		TvOb,files,TvMdl,addrs=[],[],[],[]
 		arraySize,TvBoxSize,TvLineSize=0,0,0
@@ -4370,11 +4405,17 @@ class Export_TV(bpy.types.Operator):
 							print("Mesh [%s] too much UVMap slots, max 4 allowed!" % ob.name)
 							return {'CANCELLED'}
 						else:
-							for i, expected in enumerate(FMDL_UV_LAYER_NAMES[:len(uv)]):
-								if uv[i].name != expected:
-									self.report({"WARNING"}, "Mesh [%s] UV channel %d name isn't correct! Expected: %s" % (ob.name, i, expected))
-									print("Mesh [%s] UV channel %d name isn't correct! Expected: %s" % (ob.name, i, expected))
+							uv_names = [layer.name for layer in uv]
+							last_idx = -1
+							for uv_name in uv_names:
+								if uv_name not in FMDL_UV_LAYER_NAMES:
+									self.report({"WARNING"}, "Mesh [%s] has unknown UV map name: %s" % (ob.name, uv_name))
 									return {'CANCELLED'}
+								idx = FMDL_UV_LAYER_NAMES.index(uv_name)
+								if idx <= last_idx:
+									self.report({"WARNING"}, "Mesh [%s] UV maps are not in correct order!" % ob.name)
+									return {'CANCELLED'}
+								last_idx = idx
 						if len(mat) == 0:
 							self.report({"WARNING"}, "Mesh [%s] does not have an associated material!" % ob.name)
 							print("Mesh [%s] does not have an associated material!" % ob.name)
@@ -4417,7 +4458,7 @@ class Export_TV(bpy.types.Operator):
 		pack_unpack_Fpk("{0}tv\\#Win\\tv_{1}.fpkd.xml".format(exportPath,stid))
 		remove_dir("{0}tv\\#Win\\tv_{1}_fpkd".format(exportPath,stid))
 		remove_file("{0}tv\\#Win\\tv_{1}.fpkd.xml".format(exportPath,stid))
-		self.report({"INFO"}, "Exporting TV succesfully...!")
+		self.report({"INFO"}, "Exporting TV successfully!")
 		return {'FINISHED'}
 	pass
 
@@ -4450,8 +4491,8 @@ class Convert_OT(bpy.types.Operator):
 				return {'CANCELLED'}
 			# Checking output path before converting texture
 			if not context.scene.export_path.endswith(stid + "\\"):
-				self.report({"WARNING"}, "Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
-				print("Selected path is wrong, select like e:g [-->Asset\\model\\bg\\%s<--]!!" % stid)
+				self.report({"WARNING"}, "Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
+				print("Selected path is wrong, select like e.g. [...]\\Asset\\model\\bg\\%s[...]" % stid)
 				return {'CANCELLED'}
 		else:
 			self.report({"WARNING"}, "Stadium ID isn't correct!!")
@@ -4580,8 +4621,8 @@ class Convert_OT(bpy.types.Operator):
 													except Exception as msg:
 														self.report({"WARNING"}, format(msg))
 														return {'CANCELLED'}
-		self.report({"INFO"}, "Converting texture succesfully...!")
-		print("Converting texture succesfully...!")
+		self.report({"INFO"}, "Converting texture successfully!")
+		print("Converting texture successfully!")
 		return {'FINISHED'}
 
 	pass
@@ -4606,6 +4647,17 @@ class FMDL_OP_AutoParentOrganizer(bpy.types.Operator):
             "MESH_left1","MESH_left2","MESH_left3",
             "MESH_right1","MESH_right2","MESH_right3",
             "MESH_center1","MESH_center2","MESH_center3",
+            "MESH_back1_detail","MESH_back2_detail","MESH_back3_detail",
+            "MESH_front1_detail","MESH_front2_detail","MESH_front3_detail",
+            "MESH_left1_detail","MESH_left2_detail","MESH_left3_detail",
+            "MESH_right1_detail","MESH_right2_detail","MESH_right3_detail",
+            "MESH_center1_detail","MESH_center2_detail","MESH_center3_detail",
+            "MESH_back1_probe","MESH_back2_probe","MESH_back3_probe",
+            "MESH_front1_probe","MESH_front2_probe","MESH_front3_probe",
+            "MESH_left1_probe","MESH_left2_probe","MESH_left3_probe",
+            "MESH_right1_probe","MESH_right2_probe","MESH_right3_probe",
+            "MESH_center1_probe","MESH_center2_probe","MESH_center3_probe",
+            "MESH_field","MESH_cover",
             "MESH_center1_snow","MESH_center1_rain","MESH_center1_tifo",
             "MESH_front1_game","MESH_front1_demo",
         ]
@@ -4733,14 +4785,14 @@ class Clear_OT(bpy.types.Operator):
 				remove_dir(filename[:-4]+"_fpk")
 				remove_file(filename+".xml")
 				remove_dds(getTextureDir)
-				self.report({"INFO"}, "Clear temporary data succesfully!")
+				self.report({"INFO"}, "Clear temporary data successfully!")
 			except:
 				self.report({"WARNING"}, "No temporary data found!")
 		if self.opname == "cleartempdata":
 			dirpath=context.scene.export_path+"\\sourceimages\\tga\\#windx11\\"
 			try:
 				remove_dds(dirpath)
-				self.report({"INFO"}, "Clear temporary data succesfully!")
+				self.report({"INFO"}, "Clear temporary data successfully!")
 			except:
 				self.report({"WARNING"}, "No temporary data found!")
 		return {'FINISHED'}
@@ -4797,9 +4849,9 @@ class FMDL_Shader_Set(bpy.types.Operator):
 			node_group()
 			PesFoxShader.setShader(self, context)
 		except Exception as exception:
-			self.report({"WARNING"}, format(exception) + " more info see => System Console (^_^)")
+			self.report({"WARNING"}, format(exception) + " more info see => System Console ")
 			if 'nodes' in format(exception):
-				print("\nInfo: ", format(exception) + " more info see => System Console (^_^)")
+				print("\nInfo: ", format(exception) + " more info see => System Console ")
 				print("\n\nPlease check your material, does it support nodes?\n",
 						"\n1) Remove problem material",
 						"\n2) Create a new material",

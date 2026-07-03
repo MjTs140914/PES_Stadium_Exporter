@@ -888,21 +888,41 @@ def exportFmdl(context, rootObjectName, exportSettings=None):
 		availableUvMaps = [uv.name for uv in blenderMesh.uv_layers]
 		if len(availableUvMaps) == 0:
 			raise FmdlExportError("Mesh '%s' does not have a primary UV map set." % name)
-		unexpectedUvMaps = [n for n in availableUvMaps if n not in FMDL_UV_LAYER_NAMES]
-		if unexpectedUvMaps:
-			raise FmdlExportError("Mesh '%s' has unsupported UV map name(s): %s" % (name, unexpectedUvMaps))
+
+		# Validate all names are known and in correct relative order
+		last_idx = -1
+		for uv_name in availableUvMaps:
+			if uv_name not in FMDL_UV_LAYER_NAMES:
+				raise FmdlExportError("Mesh '%s' has unsupported UV map name: %s" % (name, uv_name))
+			idx = FMDL_UV_LAYER_NAMES.index(uv_name)
+			if idx <= last_idx:
+				raise FmdlExportError("Mesh '%s' UV maps are not in correct order. Expected order: %s" % (name, FMDL_UV_LAYER_NAMES))
+			last_idx = idx
+
+		# Build the full channel list filling gaps with the nearest previous channel.
+		# e.g. [UVMap, uv_rain] → [UVMap, UVMap, uv_rain]
+		# Also build uvEqualities so FmdlFile marks the gap-filled channels as
+		# sharing the same vertex buffer slot as their source channel.
+		present = set(availableUvMaps)
 		uvLayerNames = []
-		for expected in FMDL_UV_LAYER_NAMES:
-			if expected in availableUvMaps:
-				uvLayerNames.append(expected)
+		uvEqualities = {}
+		last_present_idx = 0  # index into uvLayerNames of the last real channel
+		last_present = availableUvMaps[0]
+		max_idx = FMDL_UV_LAYER_NAMES.index(availableUvMaps[-1])
+
+		for slot_idx, expected in enumerate(FMDL_UV_LAYER_NAMES[:max_idx + 1]):
+			if expected in present:
+				last_present = expected
+				last_present_idx = slot_idx
+				uvEqualities[slot_idx] = []
 			else:
-				break
-		if not uvLayerNames:
-			raise FmdlExportError("Mesh '%s' does not have a primary UVMap layer." % name)
-		for expected in FMDL_UV_LAYER_NAMES[len(uvLayerNames):]:
-			if expected in availableUvMaps:
-				raise FmdlExportError("Mesh '%s' has UV map '%s' but is missing previous UV layer(s)." % (name, expected))
+				# Gap — this slot is a copy of last_present_idx
+				uvEqualities[slot_idx] = [last_present_idx]
+				uvEqualities[last_present_idx] = uvEqualities.get(last_present_idx, []) + [slot_idx]
+			uvLayerNames.append(last_present)
+
 		vertexFields.uvCount = len(uvLayerNames)
+		vertexFields.uvEqualities = uvEqualities
 		return uvLayerNames
 
 	def exportMesh(blenderMeshObject, materialFmdlObjects, bonesByName, scene):
