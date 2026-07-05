@@ -29,6 +29,10 @@ Thanks to the following people who have contributed to this project:
 * [Suat Cadgas/sxsxsx](https://evo-web.co.uk/members/sxsxsx.76315/)
 * [themex](https://evo-web.co.uk/members/themex.302390/)
 * [zlac](https://evo-web.co.uk/members/zlac.136687/)
+* [papijonnnn](https://github.com/papijonnnn-101)
+* [bluestillidie00](https://evoweb.uk/members/bluestillidie00.282599/)
+* [gavi83](https://evoweb.uk/members/gavi83.50954/)
+* [77oshua](https://evoweb.uk/members/77oshua.301048/)
 
 #### Credits:
 
@@ -43,7 +47,10 @@ Thanks to the following people who have contributed to this project:
 > * [Suat Cadgas/sxsxsx](https://evo-web.co.uk/members/sxsxsx.76315/)
 > * [themex](https://evo-web.co.uk/members/themex.302390/)
 > * [zlac](https://evo-web.co.uk/members/zlac.136687/)
-
+> * [papijonnnn](https://github.com/papijonnnn-101)
+> * [bluestillidie00](https://evoweb.uk/members/bluestillidie00.282599/)
+> * [gavi83](https://evoweb.uk/members/gavi83.50954/)
+> * [77oshua](https://evoweb.uk/members/77oshua.301048/)
 
 ## License
 This project uses the [MIT License](LICENSE.md).
