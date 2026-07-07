@@ -2,6 +2,17 @@ import bpy, random, re, os
 from . import IO, Ftex
 from mathutils import Vector
 
+def get_socket(node, *names):
+    for name in names:
+        if name in node.inputs:
+            return node.inputs[name]
+    return None
+
+def link_socket(links, output_socket, node, *input_names):
+    sock = get_socket(node, *input_names)
+    if sock:
+        links.new(output_socket, sock)
+
 def findTexture(texture, textureSearchPath):
 	textureFilename = texture.directory.replace('\\', '/').rstrip('/') + '/' + texture.filename.replace('\\', '/').lstrip('/')
 	textureFilenameComponents = tuple(filter(None, textureFilename.split('/')))
@@ -134,11 +145,13 @@ def addTexture(context, blenderMaterial, textureRole, texture, textureIDs, uvMap
 		SRM_Seperator.location = Vector((-200, 0))
 		NRM_Converter = blenderMaterial.node_tree.nodes['NRM Converter']
 		NRM_Converter.location = Vector((-200, -200))
-		blenderMaterial.node_tree.links.new(TRM_Subsurface.outputs['Subsurface'], principled.inputs['Subsurface Scale'])
-		blenderMaterial.node_tree.links.new(TRM_Subsurface.outputs['Subsurface Color'], principled.inputs['Subsurface Radius'])
-		blenderMaterial.node_tree.links.new(SRM_Seperator.outputs['Specular'], principled.inputs['Specular IOR Level'])
-		blenderMaterial.node_tree.links.new(SRM_Seperator.outputs['Roughness'], principled.inputs['Roughness'])
-		blenderMaterial.node_tree.links.new(NRM_Converter.outputs['Normal'], principled.inputs['Normal'])
+		links = blenderMaterial.node_tree.links
+
+		link_socket(links, TRM_Subsurface.outputs['Subsurface'], principled, 'Subsurface Weight', 'Subsurface', 'Subsurface Scale')
+		link_socket(links, TRM_Subsurface.outputs['Subsurface Color'], principled, 'Subsurface Color', 'Subsurface Radius')
+		link_socket(links, SRM_Seperator.outputs['Specular'], principled, 'Specular IOR Level', 'Specular')
+		link_socket(links, SRM_Seperator.outputs['Roughness'], principled, 'Roughness')
+		link_socket(links, NRM_Converter.outputs['Normal'], principled, 'Normal')
 		blenderImage.colorspace_settings.name = 'Non-Color'		
 		if 'Base_Tex_SRGB' in textureRole or 'Base_Tex_LIN' in textureRole:
 			blenderImage.colorspace_settings.name = 'sRGB'

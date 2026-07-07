@@ -32,6 +32,10 @@
 #     Suat Cadgas/sxsxsx
 #     themex
 #     zlac
+#     papijonnnn
+#     bluestillidie00
+#     gavi83
+#     77oshua
 #
 # v1.0.2 additions (papijonnnn):
 #     - probe and detail mesh part export support
@@ -58,8 +62,8 @@ bl_info = {
 	"name": "PES Stadium Exporter",
 	"description": "eFootball PES2021 Stadium Exporter",
 	"author": "MjTs-140914 || the4chancup",
-	"version": (1, 0, 2),
-	"blender": (5, 00, 0),
+	"version": (1, 0, 3),
+	"blender": (2, 90, 0),
 	"location": "Under Scene Tab",
 	# "warning": "This addon is still in development.",
 	"wiki_url": "https://github.com/MjTs140914/PES_Stadium_Exporter/wiki",
@@ -83,7 +87,7 @@ foxTools = '"%s\\addons\\StadiumLibs\\Gzs\\FoxTool\\FoxTool.exe"' % AddonsPath
 icons_dir = '%s\\addons\\StadiumLibs\\Gzs\\icons' % AddonsPath
 xml_dir = '%s\\addons\\StadiumLibs\\Gzs\\xml\\' % AddonsPath
 lightFxPath = '%s\\addons\\StadiumLibs\\Gzs\\' % AddonsPath
-baseStartupFile = '%s\\addons\\StadiumLibs\\Gzs\\startup.blend' % AddonsPath
+baseStartupFile = '%s\\addons\\StadiumLibs\\Gzs' % AddonsPath
 startupFile = '%sconfig\\startup.blend'%AddonsPath[:-7]
 EnlightenPath="%s\\addons\\StadiumLibs\\Gzs\\EnlightenOutput\\" % AddonsPath 
 commonfile = "%s\\addons\\StadiumLibs\\Gzs\\xml\\scarecrow\\common" % AddonsPath 
@@ -1112,7 +1116,7 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 		box = layout.box()
 		box.alignment = 'CENTER'
 		row = box.row(align=0)
-		if bpy.app.version >= (5, 00, 0):
+		if bpy.app.version >= (2, 90, 0):
 			this_icon = icons_collections["custom_icons"]["icon_1"].icon_id
 			row.label(text="eFootball PES2021 Stadium Exporter", icon_value=this_icon)
 			row = box.row()
@@ -2297,67 +2301,73 @@ class Staff_Coach_Pos(bpy.types.Operator):
 	pass
 
 class New_STID(bpy.types.Operator):
-    """Swap old ID to new ID"""
-    bl_idname = "newid.operator"
-    bl_label = ""
+	"""Swap old ID to new ID"""
+	bl_idname = "newid.operator"
+	bl_label = ""
 
-    @classmethod
-    def poll(cls, context):
-        return (context.mode == "OBJECT")
+	@classmethod
+	def poll(cls, context):
+		return (context.mode == "OBJECT")
 
-    def execute(self, context):
-        scn = context.scene
-        stid = scn.STID
+	def execute(self, context):
+		scn = context.scene
+		stid = scn.STID
 
-        if len(stid) != 5 or not re.match(r"st\d{3}", stid.lower()):
-            self.report({"WARNING"}, "Stadium ID isn't correct!!")
-            return {'CANCELLED'}
+		if len(stid) != 5 or not re.match(r"st\d{3}", stid.lower()):
+			self.report({"WARNING"}, "Stadium ID isn't correct!!")
+			return {'CANCELLED'}
 
-        if scn.export_path == "":
-            self.report({"WARNING"}, 
-                f"Choose path to swap id e.g [-->Asset\\model\\bg\\{stid}<--]!!")
-            return {'CANCELLED'}
+		if scn.export_path == "":
+			self.report({"WARNING"}, 
+				f"Choose path to swap id e.g [-->Asset\\model\\bg\\{stid}<--]!!")
+			return {'CANCELLED'}
 
-        id_changed = False
-        part = scn.part_info
+		id_changed = False
+		part = scn.part_info
 
-        for child in bpy.data.objects[part].children:
-            if child.type == 'EMPTY':
-                for ob in child.children:
-                    for ob2 in ob.children:
-                        if ob2.type == "MESH":
-                            mat = ob2.active_material
-                            if not mat:
-                                continue
+		for child in bpy.data.objects[part].children:
+			if child.type == 'EMPTY':
+				for ob in child.children:
+					for ob2 in ob.children:
+						if ob2.type == "MESH":
+							mat = ob2.active_material
+							if mat is None:
+								continue
 
-                            for node in mat.node_tree.nodes:
-                                if node.type == "TEX_IMAGE":
-                                    tex_dir = node.fmdl_texture_directory
-                                    if not tex_dir:
-                                        continue
+							if not mat.use_nodes:
+								continue
 
-                                    found = re.search(r"st\d{3}", tex_dir, re.IGNORECASE)
-                                    if not found:
-                                        continue
+							if mat.node_tree is None:
+								continue
 
-                                    old_id = found.group(0)
-                                    new_id = stid
+							for node in mat.node_tree.nodes:
+								if node.type == "TEX_IMAGE":
+									tex_dir = node.fmdl_texture_directory
+									if not tex_dir:
+										continue
 
-                                    if old_id.lower() == new_id.lower():
-                                        continue
+									found = re.search(r"st\d{3}", tex_dir, re.IGNORECASE)
+									if not found:
+										continue
 
-                                    new_dir = re.sub(r"st\d{3}", new_id, tex_dir, flags=re.IGNORECASE)
-                                    node.fmdl_texture_directory = new_dir
+									old_id = found.group(0)
+									new_id = stid
 
-                                    id_changed = True
-                                    print(f"Swap ID ({old_id}) -> ({stid}) in object ({ob2.name}) node ({node.name})")
+									if old_id.lower() == new_id.lower():
+										continue
 
-        if not id_changed:
-            self.report({"WARNING"}, "No ID changes detected in assigned textures.")
-            return {'CANCELLED'}
+									new_dir = tex_dir.replace(old_id, stid.lower())
+									node.fmdl_texture_directory = new_dir
 
-        self.report({"INFO"}, "Swap stadium ID successfully!")
-        return {'FINISHED'}
+									id_changed = True
+									print(f"Swap ID ({old_id}) -> ({stid}) in object ({ob2.name}) node ({node.name})")
+
+		if not id_changed:
+			self.report({"WARNING"}, "No ID changes detected in assigned textures.")
+			return {'CANCELLED'}
+
+		self.report({"INFO"}, "Swap stadium ID successfully!")
+		return {'FINISHED'}
 
 class TV_Objects(bpy.types.Operator):
 	"""Add TV Objects"""
@@ -4519,6 +4529,16 @@ class Convert_OT(bpy.types.Operator):
 						for ob2 in bpy.data.objects[ob.name].children:
 							if ob2 is not None and ob2.type == "MESH":
 								blenderMaterial = bpy.data.objects[ob2.name].active_material
+
+								if blenderMaterial is None:
+									continue
+
+								if not blenderMaterial.use_nodes:
+									continue
+
+								if blenderMaterial.node_tree is None:
+									continue
+
 								for nodes in blenderMaterial.node_tree.nodes:
 									if nodes.type == "TEX_IMAGE":
 										# Checking texture in node, if node not have texture assigment he will error
@@ -4798,8 +4818,6 @@ class Clear_OT(bpy.types.Operator):
 		return {'FINISHED'}
 	pass
 
-
-
 class Parent_OT(bpy.types.Operator):
 	"""Assign active object to parent list"""
 	bl_idname = "set_parent.operator"
@@ -4863,19 +4881,25 @@ class FMDL_Shader_Set(bpy.types.Operator):
 class Start_New_Scene(bpy.types.Operator):
 	"""Start New Scene"""
 	bl_idname = "scene.operator"
-	bl_label = str()
+	bl_label = ""
 
 	@classmethod
 	def poll(cls, context):
 		return context.mode == "OBJECT"
 
 	def execute(self, context):
+
 		remove_file(startupFile)
-		if os.path.isfile(baseStartupFile):
-			shutil.copy(baseStartupFile,startupFile)
+		if bpy.app.version >= (5, 0, 0):
+			startup = "startup_5_00.blend"
+		else:
+			startup = "startup_2_90.blend"
+		source = os.path.join(baseStartupFile, startup)
+		if os.path.isfile(source):
+			shutil.copy(source, startupFile)
 		bpy.ops.wm.read_homefile()
+
 		return {'FINISHED'}
-	pass
 
 class Create_Main_Parts(bpy.types.Operator):
 	"""Create Stadium Parts"""

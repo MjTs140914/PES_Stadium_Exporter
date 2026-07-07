@@ -37,6 +37,17 @@ ShadowEnum = [("Custom", "Custom", "Custom")] + [
     (str(k), v, v) for k, v in ShadowEnumDict.items()
 ]
 
+def get_socket(node, *names):
+    for name in names:
+        if name in node.inputs:
+            return node.inputs[name]
+    return None
+
+def link_socket(links, output_socket, node, *input_names):
+    sock = get_socket(node, *input_names)
+    if sock:
+        links.new(output_socket, sock)
+
 def setShader(self, context):
     try:
         domData = parse(PES_Stadium_Exporter.xml_dir + "PesFoxShader.xml")
@@ -87,11 +98,12 @@ def setShader(self, context):
         SRM.location = Vector((-200, 0))
         NRM.location = Vector((-200, -200))
 
-        nt.links.new(TRM.outputs['Subsurface'], principled.inputs['Subsurface Scale'])
-        nt.links.new(TRM.outputs['Subsurface Color'], principled.inputs['Subsurface Radius'])
-        nt.links.new(SRM.outputs['Specular'], principled.inputs['Specular IOR Level'])
-        nt.links.new(SRM.outputs['Roughness'], principled.inputs['Roughness'])
-        nt.links.new(NRM.outputs['Normal'], principled.inputs['Normal'])
+        links = nt.links
+        link_socket(links, TRM.outputs['Subsurface'], principled, 'Subsurface Weight', 'Subsurface', 'Subsurface Scale')
+        link_socket(links, TRM.outputs['Subsurface Color'], principled, 'Subsurface Color', 'Subsurface Radius')
+        link_socket(links, SRM.outputs['Specular'], principled, 'Specular IOR Level', 'Specular')
+        link_socket(links, SRM.outputs['Roughness'], principled, 'Roughness')
+        link_socket(links, NRM.outputs['Normal'], principled, 'Normal')
 
         if context.scene.part_info == "AD":
             tex_dir = "/Assets/pes16/model/bg/common/ad/sourceimages/tga/"
