@@ -1,8 +1,15 @@
 # eFootbal PES2021 PES Stadium Exporter
 
-eFootball PES2021 PES Stadium Exporter  is a [Blender 5.0](https://www.blender.org/) plugin that allows Stadium maker use easy.
+eFootball PES2021 PES Stadium Exporter  is a $${\color{blue}Blender}$$ plugin that allows Stadium maker use easy.
 
-This tool is *heavily* based on the 
+## Compatibility
+This add-on supports Blender versions 2.90 through 5.0.
+
+*Download Blender*
+* [Blender 2.90+](https://www.blender.org/download/releases/2-93/) 
+* [Blender 5.00+](https://www.blender.org/download/) 
+
+### This tool is *heavily* based on the 
 
 * [PES-FMDL by the4chancup](https://github.com/the4chancup/pes-fmdl-blender). 
 
