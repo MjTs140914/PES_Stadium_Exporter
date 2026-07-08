@@ -3,7 +3,7 @@
 eFootball PES2021 PES Stadium Exporter  is a $${\color{blue}Blender}$$ plugin that allows Stadium maker use easy.
 
 ## Compatibility
-This add-on supports Blender versions 2.90 through 5.0.
+This add-on supports Blender versions 2.90+ through 5.0+.
 
 *Download Blender*
 * [Blender 2.90+](https://www.blender.org/download/releases/2-93/) 
@@ -18,9 +18,9 @@ This add-on supports Blender versions 2.90 through 5.0.
 
 To install, simply download the Zip file from the latest release.
 
-* Blender 5.0 Go to Edit>Prefences>Add-ons>Install.
+* Go to Edit>Prefences>Add-ons>Install.
 > * After installing done, you need disable Relative Paths.
-> * Blender 5.0 Go to Edit>Prefences>Save & Load unchecklist Relative Paths.
+> * Go to Edit>Prefences>Save & Load unchecklist Relative Paths.
 
 
 
