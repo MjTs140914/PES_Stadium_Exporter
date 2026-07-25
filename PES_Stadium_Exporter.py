@@ -63,7 +63,7 @@ bl_info = {
 	"name": "PES Stadium Exporter",
 	"description": "eFootball PES2021 Stadium Exporter",
 	"author": "MjTs-140914 || the4chancup",
-	"version": (1, 0, 3),
+	"version": (1, 0, 4),
 	"blender": (2, 90, 0),
 	"location": "Under Scene Tab",
 	# "warning": "This addon is still in development.",
