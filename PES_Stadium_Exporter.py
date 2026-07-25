@@ -56,6 +56,7 @@ from struct import pack,unpack
 from bpy.props import (EnumProperty, CollectionProperty, IntProperty, StringProperty, BoolProperty, FloatProperty, FloatVectorProperty)
 from StadiumLibs import FmdlFile, Ftex, IO, PesFoxShader, PesFoxXML, PesEnlighten, PesScarecrow, PesStaff
 from xml.dom import minidom
+import xml.etree.ElementTree as ET
 from mathutils import Vector
 
 bl_info = {
@@ -123,8 +124,8 @@ main_list = (
     + ["field","cover"]
     + ["front1_demo","front1_game","center1_snow","center1_rain","center1_tifo",
        "MESH_CROWD","MESH_FLAGAREA","Pitch"]
-    + [f"TV_Large_{x}" for x in ["Left","Right","Front","Back"]]
-    + [f"TV_Small_{x}" for x in ["Left","Right","Front","Back"]]
+    + [f"TV_Large_{x}" for x in ["Left","Right","Front","Back","Center"]]
+    + [f"TV_Small_{x}" for x in ["Left","Right","Front","Back","Center"]]
     + [f"L_{x.upper()}" for x in ["front","right","left","back"]]
     + [f"H_{x.upper()}" for x in ["front","right","left","back"]]
     + [f"F_{x.upper()}" for x in ["front","right","left","back"]]
@@ -166,6 +167,35 @@ tvdatalist = [
     0x02D72E00,0x02D730A0,0x02D73340,0x02D73650,0x02D73490,
     0x02D72D20,0x02D72FC0,0x02D73260,0x02D73570,0x02D73810
 ]
+
+# Canonical name -> (fmdl filename fragment, address) mapping for TV parts.
+# Built by NAME rather than by Blender's children iteration order, since the
+# old code indexed tvdatalist/tvlist using TvOb.index(fmdlName) -- that index
+# is just "the order objects were encountered as children of the TV empty",
+# which Blender does NOT guarantee matches Back/Front/Left/Right/Center.
+# If your empties happened to be parented/created out of that assumed order,
+# a Left TV got exported with the address+filename meant for a Right (or
+# Front/Back) TV -- which is the "left/right treated as two right sides" bug.
+# name -> (fmdl filename fragment, fox2 addr, default direction, default kind,
+#          default demoGroup, kind confirmed against a real sample?)
+# direction values confirmed against a real Konami tv_center fox2.xml: Front=0,
+# Back=1, Left=2, Right=3, Center=4.
+# kind/demoGroup: the ONLY real sample we have is Center (kind=2, demoGroup=0).
+# Back/Front/Left/Right kind=0 below is what the tool has always silently
+# written -- it is NOT confirmed against a real directional TV, just the prior
+# default. Treat it as a guess until we get a real reference for those.
+tv_part_map = {
+    "TV_Large_Back":   ("large_back",   tvdatalist[0], 1, 0, 0, False),
+    "TV_Large_Front":  ("large_front",  tvdatalist[1], 0, 0, 0, False),
+    "TV_Large_Left":   ("large_left",   tvdatalist[2], 2, 0, 0, False),
+    "TV_Large_Right":  ("large_right",  tvdatalist[3], 3, 0, 0, False),
+    "TV_Small_Back":   ("small_back",   tvdatalist[4], 1, 0, 0, False),
+    "TV_Small_Front":  ("small_front",  tvdatalist[5], 0, 0, 0, False),
+    "TV_Small_Left":   ("small_left",   tvdatalist[6], 2, 0, 0, False),
+    "TV_Small_Right":  ("small_right",  tvdatalist[7], 3, 0, 0, False),
+    "TV_Large_Center": ("large_center", tvdatalist[8], 4, 2, 0, True),
+    "TV_Small_Center": ("small_center", tvdatalist[9], 4, 2, 0, True),
+}
 
 light_sidelist = []
 
@@ -400,11 +430,17 @@ def remove_file(filePath):
 	return 1
 
 def compileXML(filePath):
+	if not filePath or not isinstance(filePath, str):
+		print("compileXML: called with no valid file path (got %r) -- skipping." % (filePath,))
+		return 0
 	inp_xml = ' "' + filePath + '"'
 	os.system('"' + foxTools + inp_xml + '"')
 	return 1	
 
 def pack_unpack_Fpk(filePath):
+	if not filePath or not isinstance(filePath, str):
+		print("pack_unpack_Fpk: called with no valid file path (got %r) -- skipping." % (filePath,))
+		return 0
 	inp_xml = ' "' + filePath + '"'
 	os.system('"' + GZSPATH + inp_xml + '"')
 	return 1
@@ -664,8 +700,8 @@ def Create_Parent_Part(self, context):
 				ob.parent = bpy.data.objects["AUDIAREA"]
 			elif ob.name == "Pitch":
 				ob.parent = bpy.data.objects["PITCH2021"]
-			elif ob.name in ["TV_Large_Left","TV_Large_Right","TV_Large_Front","TV_Large_Back",
-							"TV_Small_Left","TV_Small_Right","TV_Small_Front","TV_Small_Back"]:
+			elif ob.name in ["TV_Large_Left","TV_Large_Right","TV_Large_Front","TV_Large_Back","TV_Large_Center",
+							"TV_Small_Left","TV_Small_Right","TV_Small_Front","TV_Small_Back","TV_Small_Center"]:
 				ob.parent = bpy.data.objects["TV"]
 			elif ob.name in ["ad_acl","ad_cl","ad_el","ad_normal","ad_olc","ad_sc"]:
 				ob.parent = bpy.data.objects["AD"]
@@ -1160,6 +1196,13 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 					row.label(text="Audiarea Import", icon="INFO")
 					row = box.row()
 					row.operator(FDMDL_OT_Import_Audiarea_Stadium.bl_idname, text="Import Stadium Audiarea", icon="IMPORT")
+				if ob.name == "TV":
+					row = layout.row()
+					box = layout.box()
+					row = box.row()
+					row.label(text="TV Import", icon="INFO")
+					row = box.row()
+					row.operator(FDMDL_OT_Import_TV.bl_idname, text="Import Stadium TV", icon="IMPORT")
 				if ob.name == "LIGHTS":
 					row = layout.row()
 					box = layout.box()
@@ -1404,6 +1447,96 @@ class FMDL_21_PT_UIPanel(bpy.types.Panel):
 					row = box.row()
 					row.operator("export_tv.operator", text="Export Stadium TV", icon="EXPORT")
 					row = box.row()
+					if ob.parent is not None and ob.parent.name == "TV" and ob.name in tv_part_map:
+						box = layout.box()
+						row = box.row()
+						row.label(text="Selected: %s"%ob.name, icon="CAMERA_DATA")
+						row = box.row(align=True)
+						row.prop(ob,"tvDirectionOverride", text="Override Values")
+
+						header = box.row(align=True)
+						header.prop(scn,"tv_show_basic",
+							icon="TRIA_DOWN" if scn.tv_show_basic else "TRIA_RIGHT",
+							icon_only=True, emboss=False)
+						sub = header.row()
+						sub.alignment = 'CENTER'
+						sub.label(text="Basic Properties")
+						header.label(text="", icon="LIGHT_DATA")
+						if scn.tv_show_basic:
+							_frag, _addr, defDir, defKind, defDG, kindConfirmed = tv_part_map[ob.name]
+							if not ob.tvDirectionOverride:
+								# Keep these synced to the real auto-detected values
+								# so the (disabled) widgets below can't show a
+								# stale/misleading number the way the original
+								# "Direction: Front" bug did -- only writes when
+								# the value actually differs, so it's a no-op on
+								# every redraw once in sync.
+								defDirStr = str(defDir)
+								if ob.tvDirection != defDirStr:
+									ob.tvDirection = defDirStr
+								if ob.tvKind != defKind:
+									ob.tvKind = defKind
+								if ob.tvDemoGroup != defDG:
+									ob.tvDemoGroup = defDG
+							col = box.column(align=True)
+							dsub = col.row()
+							dsub.enabled = ob.tvDirectionOverride
+							dsub.prop(ob,"tvDirection")
+							ksub = col.row()
+							ksub.enabled = ob.tvDirectionOverride
+							ksub.prop(ob,"tvKind")
+							if not kindConfirmed:
+								col.label(text="(Kind unconfirmed for this direction -- only Center is verified)")
+							dgsub = col.row()
+							dgsub.enabled = ob.tvDirectionOverride
+							dgsub.prop(ob,"tvDemoGroup")
+							box.separator()
+
+						header2 = box.row(align=True)
+						header2.prop(scn,"tv_show_advanced",
+							icon="TRIA_DOWN" if scn.tv_show_advanced else "TRIA_RIGHT",
+							icon_only=True, emboss=False)
+						sub2 = header2.row()
+						sub2.alignment = 'CENTER'
+						sub2.label(text="Advanced Properties")
+						header2.label(text="", icon="PREFERENCES")
+						if scn.tv_show_advanced:
+							col2 = box.column(align=True)
+							col2.prop(ob,"tvCustomBits")
+							col2.prop(ob,"tvFlags")
+							box.separator()
+
+						header3 = box.row(align=True)
+						header3.prop(scn,"tv_show_lod",
+							icon="TRIA_DOWN" if scn.tv_show_lod else "TRIA_RIGHT",
+							icon_only=True, emboss=False)
+						sub3 = header3.row()
+						sub3.alignment = 'CENTER'
+						sub3.label(text="LOD Properties")
+						header3.label(text="", icon="MOD_DECIM")
+						if scn.tv_show_lod:
+							col3 = box.column(align=True)
+							col3.prop(ob,"tvLodNearSize")
+							col3.prop(ob,"tvLodFarSize")
+							col3.prop(ob,"tvLodPolygonSize")
+							box.separator()
+
+						header4 = box.row(align=True)
+						header4.prop(scn,"tv_show_visibility",
+							icon="TRIA_DOWN" if scn.tv_show_visibility else "TRIA_RIGHT",
+							icon_only=True, emboss=False)
+						sub4 = header4.row()
+						sub4.alignment = 'CENTER'
+						sub4.label(text="Visibility & Flags")
+						header4.label(text="", icon="HIDE_OFF")
+						if scn.tv_show_visibility:
+							col4 = box.column(align=True)
+							col4.prop(ob,"tvDrawMode")
+							col4.prop(ob,"tvDrawRejectionLevel")
+							col4.prop(ob,"tvRejectFarRangeShadowCast")
+							col4.prop(ob,"tvIsIsolated")
+							col4.prop(ob,"tvIsDynamic")
+						row = box.row()
 				elif scn.part_info == "PITCH2021" and ob is not None:
 					if ob.name == "PITCH2021":
 						box = layout.box()
@@ -2739,7 +2872,7 @@ class FDMDL_OT_Import_Main_Stadium(bpy.types.Operator, bpy_extras.io_utils.Impor
 		if context.scene.fmdl_import_load_textures:
 			textureDir = f"{findDirectory(fpkdir)}"
 			win11Dir = findTextureDirectory(textureDir)
-			if os.path.exists(win11Dir):
+			if win11Dir and os.path.exists(win11Dir):
 				getTextureDir = getDirPath(win11Dir)
 			if os.path.exists(getTextureDir):
 				textureLoad(getTextureDir)
@@ -2818,7 +2951,7 @@ class FDMDL_OT_Import_Extra_Stadium(bpy.types.Operator, bpy_extras.io_utils.Impo
 		if context.scene.fmdl_import_load_textures:
 			textureDir = f"{findDirectory(fpkdir)}"
 			win11Dir = findTextureDirectory(textureDir)
-			if os.path.exists(win11Dir):
+			if win11Dir and os.path.exists(win11Dir):
 				getTextureDir = getDirPath(win11Dir)
 			if os.path.exists(getTextureDir):
 				textureLoad(getTextureDir)
@@ -2926,7 +3059,7 @@ class FDMDL_OT_Import_Ads_Stadium(bpy.types.Operator, bpy_extras.io_utils.Import
 		if context.scene.fmdl_import_load_textures:
 			textureDir = f"{findDirectory(fpkdir)}"
 			win11Dir = findTextureDirectory(textureDir)
-			if os.path.exists(win11Dir):
+			if win11Dir and os.path.exists(win11Dir):
 				getTextureDir = getDirPath(win11Dir)
 			if os.path.exists(getTextureDir):
 				textureLoad(getTextureDir)
@@ -3057,6 +3190,256 @@ class FDMDL_OT_Import_Audiarea_Stadium(bpy.types.Operator, bpy_extras.io_utils.I
 				blenderMaterial.node_tree.links.new(blenderTexture.outputs['Color'], principled.inputs['Base Color'])
 				for nodes in blenderMaterial.node_tree.nodes:
 					nodes.select = False 
+		return {'FINISHED'}
+	pass
+
+class FDMDL_OT_Import_TV(bpy.types.Operator, bpy_extras.io_utils.ImportHelper):
+	"""Import TV from an existing (Konami or previously exported) stadium"""
+	bl_idname = "importtv.operator"
+	bl_label = "Import Stadium TV"
+
+	import_label = "PES FMDL (.fpk)"
+
+	filename_ext = ".fpk"
+	filter_glob : bpy.props.StringProperty(default="*.fpk", options={'HIDDEN'})
+
+	def check(self, context):
+		detect_stadium_id(self.filepath)
+		return True
+
+	def draw(self, context):
+		layout = self.layout
+		layout.prop(context.scene, "STID")
+
+	def execute(self, context):
+		stid = context.scene.STID
+		fpkfilename = self.filepath
+		fpkdir = os.path.dirname(fpkfilename)
+		fn = os.path.basename(fpkfilename)
+
+		if not os.path.isfile(fpkfilename):
+			self.report({"WARNING"}, "Fpk file doesn't select!!")
+			return {'CANCELLED'}
+		if not fpkfilename.endswith(".fpk"):
+			self.report({"WARNING"}, "File not fpk format!!")
+			return {'CANCELLED'}
+		if not fn.lower().startswith("tv_"):
+			self.report({"WARNING"}, "This doesn't look like a TV fpk (expected tv_stXXX.fpk)!!")
+			return {'CANCELLED'}
+		if len(stid) == 5:
+			if stid not in fpkfilename:
+				self.report({"WARNING"}, "Stadium ID doesn't match!!")
+				return {'CANCELLED'}
+		else:
+			self.report({"WARNING"}, "Stadium ID isn't correct!!")
+			return {'CANCELLED'}
+		if "TV" not in bpy.data.objects:
+			self.report({"WARNING"}, "No 'TV' empty in the scene -- run Create Stadium Parts first!!")
+			return {'CANCELLED'}
+
+		fpkdfilename = fpkfilename[:-4] + ".fpkd"
+		haveFpkd = os.path.isfile(fpkdfilename)
+		if not haveFpkd:
+			self.report({"WARNING"}, "No matching .fpkd next to this .fpk -- importing meshes only, "
+				"direction/kind/demoGroup will stay at their guessed defaults.")
+
+		getTextureDir = str()
+		if context.scene.fmdl_import_load_textures:
+			textureDir = f"{findDirectory(fpkdir)}"
+			win11Dir = findTextureDirectory(textureDir)
+			if win11Dir and os.path.exists(win11Dir):
+				getTextureDir = getDirPath(win11Dir)
+			if os.path.exists(getTextureDir):
+				textureLoad(getTextureDir)
+
+		# unpack the mesh archive (.fpk) -- extracts the tv_*.fmdl files
+		pack_unpack_Fpk(fpkfilename)
+		fpkExtractDir = os.path.join(fpkdir, "%s_fpk" % fn[:-4])
+
+		# tv_st063_center.fmdl -> {"center": "/abs/path/tv_st063_center.fmdl"}
+		fmdlByFrag = {}
+		for root, _, filenames in os.walk(fpkExtractDir):
+			for fileName in filenames:
+				if fileName.lower().endswith(".fmdl") and fileName.lower().startswith("tv_"):
+					base = os.path.splitext(fileName)[0]
+					frag = base[len("tv_%s_" % stid):] if base.lower().startswith("tv_%s_" % stid.lower()) else None
+					if frag:
+						fmdlByFrag[frag.lower()] = os.path.join(root, fileName)
+
+		if len(fmdlByFrag) == 0:
+			self.report({"WARNING"}, "No tv_%s_*.fmdl files found inside the fpk!!" % stid)
+			return {'CANCELLED'}
+
+		fragToPart = {frag: name for name, (frag, _addr, _d, _k, _dg, _c) in tv_part_map.items()}
+
+		entityByAddr = {}
+		modelAddrByFmdlBasename = {}
+		materialByModelAddr = {}
+		xmlTree = None
+		if haveFpkd:
+			pack_unpack_Fpk(fpkdfilename)
+			fpkdExtractDir = os.path.join(fpkdir, "%s_fpkd" % fn[:-4])
+			fox2path = None
+			for root, _, filenames in os.walk(fpkdExtractDir):
+				for fileName in filenames:
+					if fileName.lower().endswith(".fox2"):
+						fox2path = os.path.join(root, fileName)
+			if fox2path is None:
+				self.report({"WARNING"}, "Couldn't find a .fox2 inside the fpkd -- importing meshes only.")
+			else:
+				compileXML(fox2path)
+				xmlpath = fox2path + ".xml"
+				if os.path.isfile(xmlpath):
+					xmlTree = ET.parse(xmlpath)
+					for entity in xmlTree.getroot().find('entities').findall('entity'):
+						entityByAddr[entity.get('addr')] = entity
+					for entity in entityByAddr.values():
+						if entity.get('class') == 'StadiumModel':
+							props = {p.get('name'): p for p in entity.find('staticProperties').findall('property')}
+							mf = props.get('modelFile')
+							if mf is not None and mf.find('value') is not None and mf.find('value').text:
+								modelAddrByFmdlBasename[os.path.basename(mf.find('value').text).lower()] = entity.get('addr')
+						elif entity.get('class') == 'StadiumTexture':
+							props = {p.get('name'): p for p in entity.find('staticProperties').findall('property')}
+							matNamesProp = props.get('materialNames')
+							modelsProp = props.get('models')
+							if matNamesProp is not None and modelsProp is not None:
+								matNames = [v.text for v in matNamesProp.findall('value')]
+								modelAddrs = [v.text for v in modelsProp.findall('value')]
+								for matName, modelAddr in zip(matNames, modelAddrs):
+									if matName and modelAddr:
+										materialByModelAddr[modelAddr] = matName
+
+		importedCount = 0
+		for frag, fmdlPath in fmdlByFrag.items():
+			partName = fragToPart.get(frag)
+			if partName is None:
+				# Real Konami stadiums don't always follow our own naming
+				# convention -- e.g. st063's real center TV file is just
+				# "tv_st063_center.fmdl", with no large_/small_ prefix at
+				# all, unlike our own exporter's "large_center"/"small_center".
+				# Disambiguate using the StadiumTexture entity's material
+				# name (e.g. "tv_large_c" vs "tv_small_c") when we can.
+				fmdlBase = os.path.basename(fmdlPath).lower()
+				modelAddr = modelAddrByFmdlBasename.get(fmdlBase)
+				materialName = materialByModelAddr.get(modelAddr, "").lower() if modelAddr else ""
+				if frag == "center":
+					if "small" in materialName:
+						partName = "TV_Small_Center"
+					else:
+						partName = "TV_Large_Center"
+					self.report({"INFO"}, "TV model file [%s] has no large_/small_ prefix (real Konami "
+						"naming) -- resolved to %s via its material (%s)" % (
+							os.path.basename(fmdlPath), partName, materialName or "unknown, defaulted"))
+				else:
+					self.report({"WARNING"}, "TV model file for [%s] doesn't match a known TV part, skipping" % frag)
+					continue
+
+			if partName in bpy.data.objects and len(bpy.data.objects[partName].children) != 0:
+				self.report({"WARNING"}, "[%s] already has mesh data, skipping (delete existing children first to re-import)" % partName)
+				continue
+
+			if partName in bpy.data.objects:
+				tvEmpty = bpy.data.objects[partName]
+			else:
+				bpy.ops.object.empty_add(type='PLAIN_AXES')
+				tvEmpty = context.active_object
+				tvEmpty.name = partName
+				tvEmpty.parent = bpy.data.objects["TV"]
+
+			# Match this part's StadiumModel entity by modelFile filename, then
+			# pull direction/kind/demoGroup/customBits + placement straight
+			# from the real fox2 data instead of our guessed defaults.
+			if xmlTree is not None:
+				modelEntity = None
+				for entity in entityByAddr.values():
+					if entity.get('class') != 'StadiumModel':
+						continue
+					props = {p.get('name'): p for p in entity.find('staticProperties').findall('property')}
+					mf = props.get('modelFile')
+					if mf is not None and mf.find('value').text is not None \
+							and os.path.basename(mf.find('value').text).lower() == os.path.basename(fmdlPath).lower():
+						modelEntity = entity
+						modelProps = props
+						break
+				if modelEntity is not None:
+					if 'direction' in modelProps:
+						tvEmpty.tvDirectionOverride = True
+						tvEmpty.tvDirection = modelProps['direction'].find('value').text
+					if 'kind' in modelProps:
+						tvEmpty.tvKind = int(modelProps['kind'].find('value').text)
+					if 'demoGroup' in modelProps:
+						tvEmpty.tvDemoGroup = int(modelProps['demoGroup'].find('value').text)
+					if 'customBits' in modelProps:
+						tvEmpty.tvCustomBits = int(modelProps['customBits'].find('value').text)
+					if 'flags' in modelProps:
+						tvEmpty.tvFlags = int(modelProps['flags'].find('value').text)
+					if 'isIsolated' in modelProps:
+						tvEmpty.tvIsIsolated = modelProps['isIsolated'].find('value').text == 'true'
+					if 'isDynamic' in modelProps:
+						tvEmpty.tvIsDynamic = modelProps['isDynamic'].find('value').text == 'true'
+					if 'lodFarSize' in modelProps:
+						tvEmpty.tvLodFarSize = float(modelProps['lodFarSize'].find('value').text)
+					if 'lodNearSize' in modelProps:
+						tvEmpty.tvLodNearSize = float(modelProps['lodNearSize'].find('value').text)
+					if 'lodPolygonSize' in modelProps:
+						tvEmpty.tvLodPolygonSize = float(modelProps['lodPolygonSize'].find('value').text)
+					if 'drawRejectionLevel' in modelProps:
+						tvEmpty.tvDrawRejectionLevel = int(modelProps['drawRejectionLevel'].find('value').text)
+					if 'drawMode' in modelProps:
+						tvEmpty.tvDrawMode = int(modelProps['drawMode'].find('value').text)
+					if 'rejectFarRangeShadowCast' in modelProps:
+						tvEmpty.tvRejectFarRangeShadowCast = int(modelProps['rejectFarRangeShadowCast'].find('value').text)
+
+					# Placement -- same Fox-Engine-to-Blender axis conversion
+					# used for Staff walk positions (PesStaff.apply_xml): Y-up
+					# game engine to Z-up Blender, with the matching quaternion
+					# axis remap.
+					transformProp = modelProps.get('transform')
+					if transformProp is not None:
+						transformAddr = transformProp.find('value').text
+						transformEntity = entityByAddr.get(transformAddr)
+						if transformEntity is not None:
+							for p in transformEntity.find('staticProperties').findall('property'):
+								t = p.get('name')
+								v = p.find('value')
+								if t == 'transform_translation':
+									tx, ty, tz = v.get('x'), v.get('y'), v.get('z')
+									if None not in (tx, ty, tz):
+										tvEmpty.location.x = float(tx)
+										tvEmpty.location.y = float(tz) * -1
+										tvEmpty.location.z = float(ty)
+								if t == 'transform_rotation_quat':
+									qx, qy, qz, qw = v.get('x'), v.get('y'), v.get('z'), v.get('w')
+									if None not in (qx, qy, qz, qw):
+										tvEmpty.rotation_mode = "QUATERNION"
+										tvEmpty.rotation_quaternion.w = float(qw)
+										tvEmpty.rotation_quaternion.x = float(qx)
+										tvEmpty.rotation_quaternion.y = float(qz) * -1
+										tvEmpty.rotation_quaternion.z = float(qy)
+								if t == 'transform_scale':
+									sx, sy, sz = v.get('x'), v.get('y'), v.get('z')
+									if None not in (sx, sy, sz):
+										tvEmpty.scale = (float(sx), float(sz), float(sy))
+
+			try:
+				importFmdlfile(fmdlPath, "Skeleton_%s" % partName, partName, partName, getTextureDir, partName)
+				importedCount += 1
+				print('Importing ==> %s' % os.path.basename(fmdlPath))
+			except Exception as e:
+				self.report({"WARNING"}, "Skipping %s -- %s" % (os.path.basename(fmdlPath), format(e)))
+
+		remove_dir(fpkExtractDir)
+		remove_file(os.path.join(fpkdir, "%s.fpk.xml" % fn[:-4]))
+		if haveFpkd:
+			remove_dir(os.path.join(fpkdir, "%s_fpkd" % fn[:-4]))
+			remove_file(os.path.join(fpkdir, "%s.fpkd.xml" % fn[:-4]))
+
+		if importedCount == 0:
+			self.report({"WARNING"}, "No TV parts were imported.")
+			return {'CANCELLED'}
+		self.report({"INFO"}, "Imported %d TV part(s)%s." % (
+			importedCount, " with real direction/kind/demoGroup data" if xmlTree is not None else ""))
 		return {'FINISHED'}
 	pass
 
@@ -4388,6 +4771,9 @@ class Export_TV(bpy.types.Operator):
 			return {'CANCELLED'}
 		TvOb,files,TvMdl,addrs=[],[],[],[]
 		arraySize,TvBoxSize,TvLineSize=0,0,0
+		# NOTE: filenames/addresses are now looked up per-object by NAME via
+		# tv_part_map (see top of file), not by position. Do not rely on
+		# list order here anymore -- kept only for reference/back-compat.
 		tvlist=["tv_%s_large_back.fmdl"%stid,
 				"tv_%s_large_front.fmdl"%stid,
 				"tv_%s_large_left.fmdl"%stid,
@@ -4396,62 +4782,99 @@ class Export_TV(bpy.types.Operator):
 				"tv_%s_small_front.fmdl"%stid,
 				"tv_%s_small_left.fmdl"%stid,
 				"tv_%s_small_right.fmdl"%stid,
+				"tv_%s_large_center.fmdl"%stid,
+				"tv_%s_small_center.fmdl"%stid,
 		]
 		assetDirname = "/Assets/pes16/model/bg/%s/scenes/" % stid
 		assetDir = "{0}tv\\#Win\\tv_{1}_fpk\\Assets\\pes16\\model\\bg\\{1}\\scenes\\".format(exportPath,stid,stid)
 		for child in bpy.data.objects[context.scene.part_info].children:
 			if child.type == 'EMPTY' and child is not None:
 				TvOb.append(child.name)
-				for ob in bpy.data.objects[child.name].children[:1]:
-					if ob is not None:
-						uv = bpy.data.meshes[ob.data.name].uv_layers
-						mat = bpy.data.objects[ob.name].material_slots
-						if len(uv) == 0:
-							self.report({"WARNING"}, "Mesh [%s] does not have a primary UV map set!" % ob.name)
-							print("Mesh [%s] does not have a primary UV map set!" % ob.name)
-							return {'CANCELLED'}
-						elif len(uv) > 4:
-							self.report({"WARNING"}, "Mesh [%s] too much UVMap slots, max 4 allowed!" % ob.name)
-							print("Mesh [%s] too much UVMap slots, max 4 allowed!" % ob.name)
-							return {'CANCELLED'}
-						else:
-							uv_names = [layer.name for layer in uv]
-							last_idx = -1
-							for uv_name in uv_names:
-								if uv_name not in FMDL_UV_LAYER_NAMES:
-									self.report({"WARNING"}, "Mesh [%s] has unknown UV map name: %s" % (ob.name, uv_name))
-									return {'CANCELLED'}
-								idx = FMDL_UV_LAYER_NAMES.index(uv_name)
-								if idx <= last_idx:
-									self.report({"WARNING"}, "Mesh [%s] UV maps are not in correct order!" % ob.name)
-									return {'CANCELLED'}
-								last_idx = idx
-						if len(mat) == 0:
-							self.report({"WARNING"}, "Mesh [%s] does not have an associated material!" % ob.name)
-							print("Mesh [%s] does not have an associated material!" % ob.name)
-							return {'CANCELLED'}
-						if len(mat) >= 2:
-							self.report({"WARNING"}, "Mesh [%s] too much material slots need to remove!" % ob.name)
-							print("Mesh [%s] too much material slots need to remove!" % ob.name)
-							return {'CANCELLED'}
-						print('\n***************************************')
-						fmdlName = child.name
-						TvMdl.append(fmdlName)
-						arraySize+=1
-						if "_Large" in fmdlName:
-							TvBoxSize+=1
-						if "_Small" in fmdlName:
-							TvLineSize+=1
-						makedir("tv\\#Win\\tv_{0}_fpk\\Assets\\pes16\\model\\bg\\{1}\\scenes".format(stid,stid),True)
-						makedir("tv\\#Win\\tv_{0}_fpkd\\Assets\\pes16\\model\\bg\\{1}\\tv".format(stid,stid),True)
-						addrs.append(hxd(tvdatalist[TvOb.index(fmdlName)],8))
-						TvName=tvlist[TvOb.index(fmdlName)]	
-						fileName = assetDir + TvName
-						files.append(assetDirname + TvName)
-						meshID = str(fileName).split('..')[0].split('\\')[-1:][0]
-						print("Exporting ==> %s"%TvName)
-						print('***************************************\n')
-						export_fmdl(self, context, fileName, meshID, fmdlName)
+				meshChildren = [o for o in bpy.data.objects[child.name].children
+								if o is not None and o.type == 'MESH']
+				if len(meshChildren) == 0:
+					# Not every TV direction/kind needs to be populated for
+					# every stadium -- an empty parent here just means this
+					# stadium doesn't use that part, so skip it rather than
+					# failing the whole export.
+					print("TV empty [%s] has no mesh data, skipping." % child.name)
+					continue
+				# Validate EVERY mesh child, not just the first -- IO.exportFmdl
+				# bundles all mesh children of this empty into one .fmdl
+				# regardless (it recurses through .children internally), so a
+				# problem on a second/third sub-mesh (e.g. TV_Small_Back having
+				# both tv_small_b_0 and tv_small_b_1) would previously go
+				# uncaught here and could fail silently deep inside export.
+				for ob in meshChildren:
+					uv = bpy.data.meshes[ob.data.name].uv_layers
+					mat = bpy.data.objects[ob.name].material_slots
+					if len(uv) == 0:
+						self.report({"WARNING"}, "Mesh [%s] does not have a primary UV map set!" % ob.name)
+						print("Mesh [%s] does not have a primary UV map set!" % ob.name)
+						return {'CANCELLED'}
+					elif len(uv) > 4:
+						self.report({"WARNING"}, "Mesh [%s] too much UVMap slots, max 4 allowed!" % ob.name)
+						print("Mesh [%s] too much UVMap slots, max 4 allowed!" % ob.name)
+						return {'CANCELLED'}
+					else:
+						uv_names = [layer.name for layer in uv]
+						last_idx = -1
+						for uv_name in uv_names:
+							if uv_name not in FMDL_UV_LAYER_NAMES:
+								self.report({"WARNING"}, "Mesh [%s] has unknown UV map name: %s" % (ob.name, uv_name))
+								return {'CANCELLED'}
+							idx = FMDL_UV_LAYER_NAMES.index(uv_name)
+							if idx <= last_idx:
+								self.report({"WARNING"}, "Mesh [%s] UV maps are not in correct order!" % ob.name)
+								return {'CANCELLED'}
+							last_idx = idx
+					if len(mat) == 0:
+						self.report({"WARNING"}, "Mesh [%s] does not have an associated material!" % ob.name)
+						print("Mesh [%s] does not have an associated material!" % ob.name)
+						return {'CANCELLED'}
+					if len(mat) >= 2:
+						self.report({"WARNING"}, "Mesh [%s] too much material slots need to remove!" % ob.name)
+						print("Mesh [%s] too much material slots need to remove!" % ob.name)
+						return {'CANCELLED'}
+
+				print('\n***************************************')
+				fmdlName = child.name
+				if fmdlName not in tv_part_map:
+					self.report({"WARNING"}, "TV empty [%s] is not a recognized TV part name!" % fmdlName)
+					print("TV empty [%s] is not a recognized TV part name!" % fmdlName)
+					return {'CANCELLED'}
+				TvMdl.append(fmdlName)
+				arraySize+=1
+				if "_Large" in fmdlName:
+					TvBoxSize+=1
+				if "_Small" in fmdlName:
+					TvLineSize+=1
+				makedir("tv\\#Win\\tv_{0}_fpk\\Assets\\pes16\\model\\bg\\{1}\\scenes".format(stid,stid),True)
+				makedir("tv\\#Win\\tv_{0}_fpkd\\Assets\\pes16\\model\\bg\\{1}\\tv".format(stid,stid),True)
+				# Look up filename/address by NAME (tv_part_map), not by
+				# position in TvOb. TvOb's order is just "the order this
+				# empty was encountered as a child" and is not guaranteed
+				# to match Back/Front/Left/Right/Center -- indexing by it
+				# was the root cause of TVs being exported under the
+				# wrong direction's filename+address (e.g. a Left TV
+				# silently exported as a Right TV).
+				nameFrag, tvAddr, _defaultDir, _defaultKind, _defaultDG, _kindConfirmed = tv_part_map[fmdlName]
+				addrs.append(hxd(tvAddr,8))
+				TvName="tv_%s_%s.fmdl"%(stid,nameFrag)
+				fileName = assetDir + TvName
+				files.append(assetDirname + TvName)
+				meshID = str(fileName).split('..')[0].split('\\')[-1:][0]
+				print("Exporting ==> %s"%TvName)
+				print('***************************************\n')
+				exportResult = export_fmdl(self, context, fileName, meshID, fmdlName)
+				if exportResult != 1:
+					# export_fmdl/IO.exportFmdl already printed the real error to
+					# the console -- checking this return value means a failed
+					# TV mesh (e.g. a bad UV/material on a second sub-mesh) now
+					# stops the export with a clear warning instead of silently
+					# leaving a missing or stale .fmdl to be bundled as-is.
+					self.report({"WARNING"}, "Failed to export TV mesh for [%s], see System Console for details" % fmdlName)
+					return {'CANCELLED'}
 		makeXML(exportPath+ "tv\\#Win\\tv_"+stid+".fpk.xml", files, "tv_%s.fpk"%stid,"Fpk","FpkFile", True)
 		makeXML(exportPath+ "tv\\#Win\\tv_"+stid+".fpkd.xml", "/Assets/pes16/model/bg/{0}/tv/tv_{1}.fox2".format(stid,stid), "tv_%s.fpkd"%stid,"Fpk","FpkFile", False)
 		fox2XmlPath="{0}tv\\#Win\\tv_{1}_fpkd\\Assets\\pes16\\model\\bg\\{2}\\tv\\tv_{3}.fox2.xml".format(exportPath,stid,stid,stid)
@@ -5150,6 +5573,7 @@ classes = [
 	FDMDL_OT_Import_Extra_Stadium,
 	FDMDL_OT_Import_Ads_Stadium,
 	FDMDL_OT_Import_Audiarea_Stadium,
+	FDMDL_OT_Import_TV,
 	FDMDL_OT_Import_Light_Effect_Stadium,
 
 	FMDL_21_PT_Texture_Panel,
@@ -5202,6 +5626,13 @@ classes = [
 ]
 
 def register():
+	# Diagnostic only: proves whether StadiumLibs submodules (PesStaff, etc.)
+	# actually reloaded, since Blender's F8/disable-enable reliably reloads
+	# this top-level script but has repeatedly NOT reloaded its submodules
+	# from sys.modules this session -- causing "fixed" code elsewhere in
+	# PesStaff.py/PesFoxXML.py/etc. to silently keep running the old version.
+	# If this prints False, a full Blender restart (not just F8) is needed.
+	print("PES_Stadium_Exporter: PesStaff._require_fox2 loaded = %s" % hasattr(PesStaff, "_require_fox2"))
 	pcoll = bpy.utils.previews.new()
 	pcoll.load("icon_0", os.path.join(icons_dir, "icon_0.dds"), 'IMAGE')
 	pcoll.load("icon_1", os.path.join(icons_dir, "icon_1.dds"), 'IMAGE')
@@ -5305,6 +5736,55 @@ def register():
 	bpy.types.Object.scrDirection = IntProperty(name="Direction")
 	bpy.types.Object.scrDemoGroup = IntProperty(name="DemoGroup")
 	bpy.types.Object.scrLimitedRotatable = BoolProperty(name="Limited Rotatable Object Links", default=False)
+
+	bpy.types.Scene.tv_show_basic = BoolProperty(name="Show Basic TV Properties", default=True)
+	bpy.types.Scene.tv_show_advanced = BoolProperty(name="Show Advanced TV Properties", default=False)
+	bpy.types.Scene.tv_show_lod = BoolProperty(name="Show TV LOD Properties", default=False)
+	bpy.types.Scene.tv_show_visibility = BoolProperty(name="Show TV Visibility & Flags", default=False)
+	def _tv_direction_override_update(self, context):
+		if self.tvDirectionOverride and self.name in tv_part_map:
+			_frag, _addr, defDir, defKind, defDG, _confirmed = tv_part_map[self.name]
+			self.tvDirection = str(defDir)
+			self.tvKind = defKind
+			self.tvDemoGroup = defDG
+
+	bpy.types.Object.tvDirectionOverride = BoolProperty(name="Override Values",
+		description="By default Direction/Kind/DemoGroup are auto-detected from the "
+					"object's name (TV_Large_Left/Right/Front/Back/Center). Enable this "
+					"to force specific values instead, e.g. to work around a known "
+					"in-game 'wrong side' bug without renaming the object",
+		default=False, update=_tv_direction_override_update)
+	bpy.types.Object.tvDirection = EnumProperty(name="Direction",
+		description="StadiumModel 'direction' value written into this TV's fox2.xml entity "
+					"when Override Direction is enabled",
+		items=[("0","Front","direction = 0"),
+				("1","Back","direction = 1"),
+				("2","Left","direction = 2"),
+				("3","Right","direction = 3"),
+				("4","Center","direction = 4")])
+	bpy.types.Object.tvKind = IntProperty(name="Kind",
+		description="StadiumModel 'kind' value written into this TV's fox2.xml entity", default=0)
+	bpy.types.Object.tvDemoGroup = IntProperty(name="DemoGroup",
+		description="StadiumModel 'demoGroup' value written into this TV's fox2.xml entity", default=0)
+	bpy.types.Object.tvCustomBits = IntProperty(name="CustomBits",
+		description="StadiumModel 'customBits' value written into this TV's fox2.xml entity", default=0)
+
+	bpy.types.Object.tvFlags = IntProperty(name="Flags",
+		description="StadiumModel 'flags' bitfield written into this TV's fox2.xml entity "
+					"(present in every Konami TV; leave at default unless you know what it controls)",
+		default=7)
+	bpy.types.Object.tvIsIsolated = BoolProperty(name="Is Isolated", default=True)
+	bpy.types.Object.tvIsDynamic = BoolProperty(name="Is Dynamic", default=False)
+	bpy.types.Object.tvLodNearSize = FloatProperty(name="LOD Near Size", default=-1.0)
+	bpy.types.Object.tvLodFarSize = FloatProperty(name="LOD Far Size", default=-1.0)
+	bpy.types.Object.tvLodPolygonSize = FloatProperty(name="LOD Polygon Size",
+		description="0.1 on the real Konami tv_center sample vs 1.0 on directional TVs -- "
+					"unconfirmed whether that's Center-specific or universal, so it's exposed "
+					"here for you to test rather than silently changed",
+		default=1.0)
+	bpy.types.Object.tvDrawRejectionLevel = IntProperty(name="Draw Rejection Level", default=8)
+	bpy.types.Object.tvDrawMode = IntProperty(name="Draw Mode", default=0)
+	bpy.types.Object.tvRejectFarRangeShadowCast = IntProperty(name="Reject Far Range Shadow Cast", default=2)
 	bpy.types.Scene.scrGenerateFpkd = BoolProperty(name="Only Generate .FPKD", default=False)
 	bpy.types.Object.ObjectLinksName = StringProperty(name="Entity Name")
 	bpy.types.Object.EntityObjectLinks = StringProperty(name="Entity Links")

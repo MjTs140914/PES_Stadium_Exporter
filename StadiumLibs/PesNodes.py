@@ -95,7 +95,22 @@ def addTexture(context, blenderMaterial, textureRole, texture, textureIDs, uvMap
 
 		filename = findTexture(texture, textureSearchPath)
 		if filename is None:
-			blenderImage.filepath = texturePath
+			# texturePath is a guessed "<search dir>\<name>.dds" path that may
+			# not actually exist -- pointing a 'FILE' image at a nonexistent
+			# path is what makes Blender show the bright magenta "missing
+			# image" checker. blenderTexture.fmdl_texture_directory (set
+			# below) is what FMDL re-export actually reads back, not this
+			# Image's filepath/source, so falling back to a plain blank
+			# generated image here is purely cosmetic and doesn't touch any
+			# material/shader/export settings.
+			if os.path.isfile(texturePath):
+				blenderImage.filepath = texturePath
+				blenderImage.reload()
+			else:
+				blenderImage.source = 'GENERATED'
+				blenderImage.generated_width = 4
+				blenderImage.generated_height = 4
+				blenderImage.generated_color = (1.0, 1.0, 1.0, 1.0)
 		elif filename.lower().endswith('.ftex'):
 			blenderImage.filepath = filename
 			Ftex.blenderImageLoadFtex(blenderImage, bpy.app.tempdir)

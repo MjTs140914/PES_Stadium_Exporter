@@ -2,6 +2,57 @@ import bpy, os, PES_Stadium_Exporter
 import xml.etree.ElementTree as ET
 from StadiumLibs import PesFoxXML
 
+def get_staff_fox2(exportPath, stid, *suffixes):
+
+    basedir = os.path.join(
+        exportPath,
+        "staff",
+        "#Win",
+        f"staff_{stid}_fpkd"
+    )
+
+    for root, _, files in os.walk(basedir):
+        for file in files:
+
+            if not file.lower().endswith(".fox2"):
+                continue
+
+            name = os.path.splitext(file)[0].lower()
+
+            for suffix in suffixes:
+                if name.endswith("_" + suffix.lower()):
+                    return os.path.join(root, file)
+
+    return None
+
+def _require_fox2(self, fox2, exportPath, stid, suffixes):
+	# get_staff_fox2 returns None if it can't find a .fox2 file ending in any
+	# of `suffixes` under this stadium's unpacked staff folder. That can be
+	# because the real file uses a different name suffix than expected, but
+	# it's just as often because the unpack step silently failed to write
+	# some files at all -- Windows has a 260-character MAX_PATH limit, and
+	# the full extraction path here (exportPath + staff\#Win\staff_..._fpkd\
+	# Assets\pes16\model\bg\...\staff\<filename>) can easily cross that if
+	# exportPath itself is already deeply nested. When that happens there's
+	# no visible error from the extraction tool -- the file just never
+	# appears -- so flag it here rather than let it look like a naming bug.
+	if fox2 is None:
+		basedir = os.path.join(exportPath, "staff", "#Win", "staff_%s_fpkd" % stid)
+		lengthNote = ""
+		if len(basedir) > 200:
+			lengthNote = (" Also worth knowing: this path is already %d characters long "
+				"(before the filename is even added). Windows' 260-character MAX_PATH "
+				"limit means the unpack tool can silently fail to write some files with "
+				"no visible error when paths get this long -- if this keeps happening, "
+				"try exporting/unpacking from a shorter path, e.g. C:\\PES\\%s\\, rather "
+				"than a deeply nested folder." % (len(basedir), stid))
+		self.report({"WARNING"}, "Couldn't find a %s .fox2 file for stadium %s under "
+			"%s -- either it didn't unpack, or this stadium's real file uses a different "
+			"name suffix than expected.%s" % (
+				"/".join(suffixes), stid, basedir, lengthNote))
+		return False
+	return True
+
 staff_walk_list = ['gu_england2018A',
 				'gu_england2018B',
 				'st_flee2018A_non',
@@ -95,12 +146,9 @@ def importStaffWalk(self, context):
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkdfilename)
 	basedird = os.path.dirname(fpkdfilename)
 	fox2xmlName=str()
-	for root, directories, filenames in os.walk(basedird):
-		for fileName in filenames:
-			filename, extension = os.path.splitext(fileName)
-			if extension.lower() == '.fox2':
-				if '_walk' in filename:
-					fox2xmlName = os.path.join(root, fileName)
+	fox2xmlName = get_staff_fox2(exportPath, stid, "walk")
+	if not _require_fox2(self, fox2xmlName, exportPath, stid, ["walk"]):
+		return
 
 	PES_Stadium_Exporter.compileXML(fox2xmlName)
 	Staff_Config(self,context,fox2xmlName+'.xml','Staff Walk')
@@ -185,7 +233,9 @@ def importBallboy(self, context):
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkfilename)
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkdfilename)
 	dirPath ="%s\\addons\\StadiumLibs\\Gzs\\xml\\scarecrow\\textures\\"%PES_Stadium_Exporter.AddonsPath
-	fox2="%sstaff\\#Win\\staff_%s_fpkd\\Assets\\pes16\\model\\bg\\%s\\staff\\%s_2018_common_ste_sit.fox2"%(exportPath,stid,stid,stid)
+	fox2 = get_staff_fox2(exportPath, stid, "ste_sit", "steward_sit")
+	if not _require_fox2(self, fox2, exportPath, stid, ["ste_sit", "steward_sit"]):
+		return
 	PES_Stadium_Exporter.compileXML(fox2)
 	xml="%s.xml"%fox2
 	xmlTree = ET.parse(xml)
@@ -309,7 +359,9 @@ def Ballboy_Assign(self,context):
 	exportPath=context.scene.export_path
 	fpkd="%sstaff\\#Win\\staff_%s.fpkd"%(exportPath,stid)
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkd)
-	fox2="%sstaff\\#Win\\staff_%s_fpkd\\Assets\\pes16\\model\\bg\\%s\\staff\\%s_2018_common_ste_sit.fox2"%(exportPath,stid,stid,stid)
+	fox2 = get_staff_fox2(exportPath, stid, "ste_sit", "steward_sit")
+	if not _require_fox2(self, fox2, exportPath, stid, ["ste_sit", "steward_sit"]):
+		return
 	PES_Stadium_Exporter.compileXML(fox2)
 	xml="%s.xml"%fox2
 	isize=0
@@ -328,10 +380,7 @@ def Ballboy_Assign(self,context):
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkd+".xml")
 	return 1
 
-
-
 # CamCrew
-	
 def importCamCrew(self, context):
 	stid=context.scene.STID
 	exportPath=context.scene.export_path
@@ -340,7 +389,9 @@ def importCamCrew(self, context):
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkfilename)
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkdfilename)
 	dirPath ="%s\\addons\\StadiumLibs\\Gzs\\xml\\scarecrow\\textures\\"%PES_Stadium_Exporter.AddonsPath
-	fox2="%sstaff\\#Win\\staff_%s_fpkd\\Assets\\pes16\\model\\bg\\%s\\staff\\%s_2018_common_cam00.fox2"%(exportPath,stid,stid,stid)
+	fox2 = get_staff_fox2(exportPath, stid, "cam00", "cam")
+	if not _require_fox2(self, fox2, exportPath, stid, ["cam00", "cam"]):
+		return
 	PES_Stadium_Exporter.compileXML(fox2)
 	xml="%s.xml"%fox2
 	xmlTree = ET.parse(xml)
@@ -464,7 +515,9 @@ def CamCrew_Assign(self,context):
 	exportPath=context.scene.export_path
 	fpkd="%sstaff\\#Win\\staff_%s.fpkd"%(exportPath,stid)
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkd)
-	fox2="%sstaff\\#Win\\staff_%s_fpkd\\Assets\\pes16\\model\\bg\\%s\\staff\\%s_2018_common_cam00.fox2"%(exportPath,stid,stid,stid)
+	fox2 = get_staff_fox2(exportPath, stid, "cam00", "cam")
+	if not _require_fox2(self, fox2, exportPath, stid, ["cam00", "cam"]):
+		return
 	PES_Stadium_Exporter.compileXML(fox2)
 	xml="%s.xml"%fox2
 	isize=0
@@ -494,7 +547,9 @@ def importSteward(self, context):
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkfilename)
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkdfilename)
 	dirPath ="%s\\addons\\StadiumLibs\\Gzs\\xml\\scarecrow\\textures\\"%PES_Stadium_Exporter.AddonsPath
-	fox2="%sstaff\\#Win\\staff_%s_fpkd\\Assets\\pes16\\model\\bg\\%s\\staff\\%s_2018_common_steward.fox2"%(exportPath,stid,stid,stid)
+	fox2 = get_staff_fox2(exportPath, stid, "steward")
+	if not _require_fox2(self, fox2, exportPath, stid, ["steward"]):
+		return
 	PES_Stadium_Exporter.compileXML(fox2)
 	xml="%s.xml"%fox2
 	xmlTree = ET.parse(xml)
@@ -568,7 +623,9 @@ def Steward_Assign(self,context):
 	exportPath=context.scene.export_path
 	fpkd="%sstaff\\#Win\\staff_%s.fpkd"%(exportPath,stid)
 	PES_Stadium_Exporter.pack_unpack_Fpk(fpkd)
-	fox2="%sstaff\\#Win\\staff_%s_fpkd\\Assets\\pes16\\model\\bg\\%s\\staff\\%s_2018_common_steward.fox2"%(exportPath,stid,stid,stid)
+	fox2 = get_staff_fox2(exportPath, stid, "steward")
+	if not _require_fox2(self, fox2, exportPath, stid, ["steward"]):
+		return
 	PES_Stadium_Exporter.compileXML(fox2)
 	xml="%s.xml"%fox2
 	isize=0

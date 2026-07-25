@@ -153,7 +153,19 @@ def importFmdl(context, fmdl, filename, importSettings = None):
 			if loadTextures:
 				filename = findTexture(texture, textureSearchPath)
 				if filename == None:
-					blenderImage.filepath = texture.directory + texture.filename
+					# Don't point this Image at a file that doesn't exist --
+					# that's what makes Blender show the bright magenta
+					# "missing image" checker. The real data needed to
+					# re-export this texture reference correctly comes from
+					# blenderTexture.fmdl_texture_directory (set below), not
+					# from this Image's filepath, so leaving it as a plain
+					# blank generated image instead is purely cosmetic and
+					# has no effect on FMDL export or any material/shader
+					# settings.
+					blenderImage.source = 'GENERATED'
+					blenderImage.generated_width = 4
+					blenderImage.generated_height = 4
+					blenderImage.generated_color = (1.0, 1.0, 1.0, 1.0)
 				elif filename.lower().endswith('.ftex'):
 					blenderImage.filepath = filename
 					Ftex.blenderImageLoadFtex(blenderImage, bpy.app.tempdir)

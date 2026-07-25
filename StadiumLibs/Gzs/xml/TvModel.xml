@@ -1,5 +1,5 @@
 
-		<entity class="StadiumModel" classVersion="2" addr="addrs" unknown1="400" unknown2="0">
+		<entity class="StadiumModel" classVersion="3" addr="addrs" unknown1="400" unknown2="0">
 		<staticProperties>
 			<property name="name" type="String" container="StaticArray" arraySize="1">
 			<value>DirName</value>
@@ -21,43 +21,49 @@
 			</property>
 			<property name="children" type="EntityHandle" container="List" />
 			<property name="flags" type="uint32" container="StaticArray" arraySize="1">
-			<value>7</value>
+			<value>%flags</value>
 			</property>
 			<property name="modelFile" type="FilePtr" container="StaticArray" arraySize="1">
 			<value>assetpath</value>
 			</property>
 			<property name="isIsolated" type="bool" container="StaticArray" arraySize="1">
-			<value>true</value>
+			<value>%isIsolated</value>
 			</property>
 			<property name="isDynamic" type="bool" container="StaticArray" arraySize="1">
-			<value>false</value>
+			<value>%isDynamic</value>
 			</property>
 			<property name="lodFarSize" type="float" container="StaticArray" arraySize="1">
-			<value>-1</value>
+			<value>%lodFarSize</value>
 			</property>
 			<property name="lodNearSize" type="float" container="StaticArray" arraySize="1">
-			<value>-1</value>
+			<value>%lodNearSize</value>
 			</property>
 			<property name="lodPolygonSize" type="float" container="StaticArray" arraySize="1">
-			<value>1</value>
+			<value>%lodPolygonSize</value>
 			</property>
 			<property name="color" type="Color" container="StaticArray" arraySize="1">
 			<value r="1" g="1" b="1" a="1" />
 			</property>
 			<property name="drawRejectionLevel" type="int32" container="StaticArray" arraySize="1">
-			<value>8</value>
+			<value>%drawRejectionLevel</value>
 			</property>
 			<property name="drawMode" type="int32" container="StaticArray" arraySize="1">
-			<value>0</value>
+			<value>%drawMode</value>
 			</property>
 			<property name="rejectFarRangeShadowCast" type="int32" container="StaticArray" arraySize="1">
-			<value>2</value>
+			<value>%rejectFarRangeShadowCast</value>
 			</property>
 			<property name="direction" type="int32" container="StaticArray" arraySize="1">
 			<value>%direction</value>
 			</property>
 			<property name="kind" type="int32" container="StaticArray" arraySize="1">
-			<value>0</value>
+			<value>%kind</value>
+			</property>
+			<property name="demoGroup" type="int32" container="StaticArray" arraySize="1">
+			<value>%demoGroup</value>
+			</property>
+			<property name="customBits" type="uint32" container="StaticArray" arraySize="1">
+			<value>%customBits</value>
 			</property>
 		</staticProperties>
 		<dynamicProperties />

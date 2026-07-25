@@ -126,7 +126,7 @@ cltv=[
 	'\n\t\t<class name="Entity" super="" version="2" />'
 	'\n\t\t<class name="Data" super="Entity" version="2" />'
 	'\n\t\t<class name="DataSet" super="" version="0" />'
-	'\n\t\t<class name="StadiumModel" super="" version="2" />'
+	'\n\t\t<class name="StadiumModel" super="" version="3" />'
 	'\n\t\t<class name="TransformEntity" super="" version="0" />'
 	'\n\t\t<class name="StadiumTexture" super="" version="1" />'
 	'\n\t</classes>'
@@ -182,10 +182,14 @@ tvLine=[
 		'\n\t\t\t\t\t<value>tv_small_c</value>'
 		'\n\t\t\t\t</property>'
 ]
+# Kept for backward-compat reference only; PES_Stadium_Exporter.tv_part_map is
+# now the single source of truth for name -> default direction (it also covers
+# Center, direction=4, confirmed against a real Konami tv_center fox2.xml).
 tvdirection={'Front':0,
 			'Back':1,
 			'Left':2,
 			'Right':3,
+			'Center':4,
 }
 def makeXMLForTv(filename,TvMdl,arraySize,addrs,assetpath,TvBoxSize,TvLineSize):
 	idx1,idx2,idx3=0,0,0
@@ -215,12 +219,43 @@ def makeXMLForTv(filename,TvMdl,arraySize,addrs,assetpath,TvBoxSize,TvLineSize):
 			file.write(ls)
 
 		for mdl in TvMdl:
-			tvDir=tvdirection[mdl.split("_")[2]]
+			ob = bpy.data.objects[mdl]
+			_nameFrag, _addr, defaultDir, defaultKind, defaultDG, _kindConfirmed = PES_Stadium_Exporter.tv_part_map[mdl]
+			if getattr(ob, "tvDirectionOverride", False):
+				tvDir = int(ob.tvDirection)
+				tvKind = getattr(ob, "tvKind", defaultKind)
+				tvDemoGroup = getattr(ob, "tvDemoGroup", defaultDG)
+			else:
+				tvDir = defaultDir
+				tvKind = defaultKind
+				tvDemoGroup = defaultDG
+			tvCustomBits = getattr(ob, "tvCustomBits", 0)
+			tvFlags = getattr(ob, "tvFlags", 7)
+			tvIsIsolated = "true" if getattr(ob, "tvIsIsolated", True) else "false"
+			tvIsDynamic = "true" if getattr(ob, "tvIsDynamic", False) else "false"
+			tvLodFarSize = getattr(ob, "tvLodFarSize", -1.0)
+			tvLodNearSize = getattr(ob, "tvLodNearSize", -1.0)
+			tvLodPolygonSize = getattr(ob, "tvLodPolygonSize", 1.0)
+			tvDrawRejectionLevel = getattr(ob, "tvDrawRejectionLevel", 8)
+			tvDrawMode = getattr(ob, "tvDrawMode", 0)
+			tvRejectFarRangeShadowCast = getattr(ob, "tvRejectFarRangeShadowCast", 2)
 			Tv_Mdl=open(PES_Stadium_Exporter.xml_dir+'TvModel.xml','rt').read()
 			Tv_Mdl=Tv_Mdl.replace("DirName",mdl)
 			Tv_Mdl=Tv_Mdl.replace("addrs",addrs[idx2])
 			Tv_Mdl=Tv_Mdl.replace("assetpath",assetpath[idx2])
 			Tv_Mdl=Tv_Mdl.replace("%direction",str(tvDir))
+			Tv_Mdl=Tv_Mdl.replace("%kind",str(tvKind))
+			Tv_Mdl=Tv_Mdl.replace("%demoGroup",str(tvDemoGroup))
+			Tv_Mdl=Tv_Mdl.replace("%customBits",str(tvCustomBits))
+			Tv_Mdl=Tv_Mdl.replace("%flags",str(tvFlags))
+			Tv_Mdl=Tv_Mdl.replace("%isIsolated",tvIsIsolated)
+			Tv_Mdl=Tv_Mdl.replace("%isDynamic",tvIsDynamic)
+			Tv_Mdl=Tv_Mdl.replace("%lodFarSize",str(tvLodFarSize))
+			Tv_Mdl=Tv_Mdl.replace("%lodNearSize",str(tvLodNearSize))
+			Tv_Mdl=Tv_Mdl.replace("%lodPolygonSize",str(tvLodPolygonSize))
+			Tv_Mdl=Tv_Mdl.replace("%drawRejectionLevel",str(tvDrawRejectionLevel))
+			Tv_Mdl=Tv_Mdl.replace("%drawMode",str(tvDrawMode))
+			Tv_Mdl=Tv_Mdl.replace("%rejectFarRangeShadowCast",str(tvRejectFarRangeShadowCast))
 			file.write(Tv_Mdl)
 			idx2+=1
 		if "_Large" in str(TvMdl):
